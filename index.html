@@ -9,9 +9,9 @@
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 /* ═══════════════════════════════════════════════════════════
-   EQX BRAND SYSTEM — Coach Curriculum Playbook Palette
-   Primary: Coral #F26B43  |  Green #158158  |  Blue #058DC7
-   Secondary: Teal #24CBE5  |  Yellow #F5D800  |  Off-Black #231F20
+   EQX BRAND SYSTEM — Coach Curriculum Playbook · Charcoal-Tinted
+   Foundation: Black · Off-Black · Charcoal · White · Restrained Grays
+   Status Green #1a5c38  |  Status Blue #1f4e72  |  Status Rust #7a2d1f
    Typography: Space Grotesk (≈ Equinox Sans grotesque) + DM Mono (≈ Messina Mono)
 ═══════════════════════════════════════════════════════════ */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -26,13 +26,13 @@
   --near-white: #f8f8f8;
   --white:      #ffffff;
 
-  /* Functional Status Colors ONLY (restrained, purposeful) */
-  --green:      #1a7a4a;
-  --green-bg:   #f0f6f3;
-  --blue:       #0052a3;
-  --blue-bg:    #f0f5fb;
-  --coral:      #b83c2a;
-  --coral-bg:   #faf4f2;
+  /* Functional Status Colors — Charcoal-Tinted, Smoked, Restrained */
+  --green:      #1a5c38;
+  --green-bg:   #edf3ef;
+  --blue:       #1f4e72;
+  --blue-bg:    #edf2f7;
+  --coral:      #7a2d1f;
+  --coral-bg:   #f5eeec;
 
   /* Deprecated: Removed teal, yellow, vibrant accents */
 
@@ -88,9 +88,9 @@ a { text-decoration: none; color: inherit; }
    TOP BAR
 ═══════════════════════════════════════════════════════════ */
 .topbar {
-  background: var(--white);
-  border-bottom: 1px solid var(--light-gray);
-  padding: 18px 36px;
+  background: var(--black);
+  border-bottom: 1px solid #1e1e1e;
+  padding: 16px 36px;
   position: sticky; top: 0; z-index: 100;
 }
 .topbar-inner {
@@ -98,29 +98,29 @@ a { text-decoration: none; color: inherit; }
   display: flex; align-items: flex-start; justify-content: space-between; gap: 24px;
 }
 .topbar h1 {
-  font-size: 20px; font-weight: 700;
-  letter-spacing: -0.3px; color: var(--black); line-height: 1.15;
+  font-size: 14px; font-weight: 700;
+  letter-spacing: 0.10em; text-transform: uppercase; color: var(--white); line-height: 1.15;
 }
-.topbar h1 span.brand-word { color: var(--black); }
+.topbar h1 span.brand-word { color: var(--white); }
 .topbar .meta {
-  margin-top: 5px; font-size: 12px; color: var(--dark-gray);
+  margin-top: 5px; font-size: 11px; color: rgba(255,255,255,0.4);
   display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
 }
-.meta strong { color: var(--off-black); font-weight: 600; }
-.meta-sep { color: var(--light-gray); }
+.meta strong { color: rgba(255,255,255,0.75); font-weight: 600; }
+.meta-sep { color: rgba(255,255,255,0.15); }
 .data-source {
   display: flex; align-items: center; gap: 6px;
-  font-size: 11px; color: var(--dark-gray);
+  font-size: 10px; color: rgba(255,255,255,0.35);
   font-family: 'DM Mono', monospace;
-  letter-spacing: 0.02em;
-  flex-shrink: 0; margin-top: 6px;
+  letter-spacing: 0.04em;
+  flex-shrink: 0; margin-top: 4px;
 }
-.data-source em { font-style: normal; color: var(--off-black); }
+.data-source em { font-style: normal; color: rgba(255,255,255,0.6); }
 .info-dot {
   width: 15px; height: 15px; border-radius: 50%;
-  border: 1px solid var(--dark-gray);
+  border: 1px solid rgba(255,255,255,0.25);
   display: inline-flex; align-items: center; justify-content: center;
-  font-size: 9px; font-family: 'DM Mono', monospace; color: var(--dark-gray);
+  font-size: 9px; font-family: 'DM Mono', monospace; color: rgba(255,255,255,0.3);
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -174,9 +174,9 @@ a { text-decoration: none; color: inherit; }
   letter-spacing: 0.06em; text-transform: uppercase;
   font-family: 'DM Mono', monospace;
 }
-.badge-top      { background: var(--green-bg); color: var(--green); border: 1px solid rgba(21,129,88,0.25); }
-.badge-building { background: var(--blue-bg); color: var(--blue); border: 1px solid rgba(5,141,199,0.25); }
-.badge-needs    { background: var(--coral-bg); color: var(--coral); border: 1px solid rgba(205,60,42,0.25); }
+.badge-top      { background: var(--green-bg); color: var(--green); border: 1px solid rgba(26,92,56,0.2); }
+.badge-building { background: var(--blue-bg); color: var(--blue); border: 1px solid rgba(31,78,114,0.2); }
+.badge-needs    { background: var(--coral-bg); color: var(--coral); border: 1px solid rgba(122,45,31,0.2); }
 .badge-ramp     { background: #f3f3f3; color: var(--dark-gray); border: 1px solid #d8d8d8; }
 
 /* ═══════════════════════════════════════════════════════════
@@ -245,7 +245,7 @@ a { text-decoration: none; color: inherit; }
    MAIN TWO-COLUMN
 ═══════════════════════════════════════════════════════════ */
 .main-cols {
-  display: grid; grid-template-columns: 1fr 340px;
+  display: grid; grid-template-columns: 1fr 360px;
   gap: 20px; align-items: start; padding-bottom: 52px;
 }
 
@@ -277,26 +277,41 @@ a { text-decoration: none; color: inherit; }
 .band-lbl.needs    { color: var(--coral); }
 .band-cnt { font-size: 11px; color: var(--mid-gray); font-family: 'DM Mono', monospace; }
 
-/* Coach card grid */
-.coach-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 10px; }
-.cc {
-  border: var(--border); border-radius: var(--radius);
-  padding: 14px 14px 12px;
-  cursor: pointer; position: relative;
-  transition: box-shadow 0.12s, border-color 0.12s;
+/* Coach performance card grid — 4-col, compact, 3 session rings */
+.coach-card-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 6px; }
+.cc2 {
   background: var(--white);
+  border: var(--border);
+  border-radius: var(--radius);
+  padding: 16px 14px 14px;
+  cursor: pointer; position: relative; overflow: hidden;
+  transition: box-shadow 0.12s, border-color 0.12s;
 }
-.cc:hover { box-shadow: var(--shadow-lg); border-color: var(--coral); }
-.cc-bar { position: absolute; left: 0; top: 10px; bottom: 10px; width: 3px; border-radius: 0 2px 2px 0; }
-.cc-bar.top      { background: var(--green); }
-.cc-bar.building { background: var(--blue); }
-.cc-bar.needs    { background: var(--coral); }
-.cc-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 12px; }
-.cc-name { font-size: 12px; font-weight: 600; color: var(--black); line-height: 1.2; }
-.cc-level { font-size: 10px; color: var(--dark-gray); margin-top: 2px; font-family: 'DM Mono', monospace; }
-.cc-stats { display: flex; gap: 16px; }
-.cc-stat-lbl { font-size: 9px; color: var(--mid-gray); text-transform: uppercase; letter-spacing: 0.06em; font-family: 'DM Mono', monospace; }
-.cc-stat-val { font-size: 14px; font-weight: 600; color: var(--off-black); margin-top: 1px; }
+.cc2:hover { box-shadow: var(--shadow-lg); border-color: var(--mid-gray); }
+.cc2-accent { position: absolute; left: 0; top: 0; bottom: 0; width: 3px; }
+.cc2-top {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  margin-bottom: 14px; padding-left: 8px;
+}
+.cc2-name { font-size: 13px; font-weight: 600; color: var(--black); line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 130px; }
+.cc2-meta { font-size: 10px; color: var(--mid-gray); font-family: 'DM Mono', monospace; margin-top: 3px; letter-spacing: 0.03em; }
+.cc2-score { font-size: 28px; font-weight: 700; letter-spacing: -0.5px; line-height: 1; flex-shrink: 0; }
+.cc2-rings { display: flex; justify-content: space-around; align-items: flex-start; padding: 0 2px; }
+.cc2-ring-wrap { display: flex; flex-direction: column; align-items: center; gap: 5px; }
+.cc2-ring-cont { position: relative; width: 50px; height: 50px; flex-shrink: 0; }
+.cc2-ring-cont svg { display: block; }
+.cc2-ring-val {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700; color: var(--off-black);
+  font-family: 'DM Mono', monospace; letter-spacing: -0.02em;
+}
+.cc2-ring-lbl {
+  font-size: 9px; color: var(--mid-gray); font-family: 'DM Mono', monospace;
+  letter-spacing: 0.04em; text-transform: uppercase; text-align: center; line-height: 1.2;
+}
+/* Band separator */
+.perf-band + .perf-band { border-top: 1px solid var(--light-gray); padding-top: 16px; }
 
 .show-all-btn {
   display: inline-flex; align-items: center; gap: 6px;
@@ -306,7 +321,7 @@ a { text-decoration: none; color: inherit; }
   transition: background 0.12s, color 0.12s;
   font-weight: 500;
 }
-.show-all-btn:hover { background: var(--coral-bg); color: var(--coral); border-color: rgba(242,107,67,0.3); }
+.show-all-btn:hover { background: var(--near-white); color: var(--off-black); border-color: var(--mid-gray); }
 
 /* ═══════════════════════════════════════════════════════════
    RAMP PYRAMID PANEL
@@ -328,14 +343,14 @@ a { text-decoration: none; color: inherit; }
 }
 .pyr-bar {
   display: flex; align-items: center; justify-content: center;
-  border-radius: 4px; height: 30px;
-  font-size: 10px; font-weight: 600;
+  border-radius: 4px; height: 40px;
+  font-size: 12px; font-weight: 600;
   color: var(--white); letter-spacing: 0.04em;
   transition: opacity 0.12s;
   font-family: 'DM Mono', monospace;
 }
 .pyr-row:hover .pyr-bar { opacity: 0.85; }
-.pyr-row.pyr-selected .pyr-bar { outline: 2px solid var(--coral); outline-offset: 2px; }
+.pyr-row.pyr-selected .pyr-bar { outline: 2px solid var(--off-black); outline-offset: 2px; }
 .pyr-count { font-size: 11px; color: var(--dark-gray); width: 18px; text-align: right; font-family: 'DM Mono', monospace; }
 
 /* Stage detail */
@@ -363,12 +378,25 @@ a { text-decoration: none; color: inherit; }
 .view-all-link { font-size: 11px; color: var(--dark-gray); margin-top: 12px; cursor: pointer; font-family: 'DM Mono', monospace; letter-spacing: 0.04em; }
 
 /* ═══════════════════════════════════════════════════════════
-   VIEW 2 — BACK BUTTON
+   VIEW 2 — NAVIGATION
 ═══════════════════════════════════════════════════════════ */
+/* In-topbar back button — primary nav */
+.topbar-back {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+  color: rgba(255,255,255,0.45);
+  font-family: 'DM Mono', monospace;
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: var(--radius-sm); padding: 5px 10px;
+  transition: color 0.12s, border-color 0.12s, background 0.12s;
+  cursor: pointer; background: none; white-space: nowrap; flex-shrink: 0;
+}
+.topbar-back:hover { color: var(--white); border-color: rgba(255,255,255,0.35); background: rgba(255,255,255,0.06); }
+/* In-page back button — secondary fallback */
 .back-btn {
   display: inline-flex; align-items: center; gap: 6px;
-  font-size: 12px; color: var(--dark-gray);
-  margin: 20px 0 0; cursor: pointer;
+  font-size: 11px; color: var(--mid-gray);
+  margin: 18px 0 0; cursor: pointer;
   font-family: 'DM Mono', monospace; letter-spacing: 0.04em;
   transition: color 0.12s;
 }
@@ -416,7 +444,7 @@ a { text-decoration: none; color: inherit; }
 .pk-name { color: var(--dark-gray); }
 .pk-val { font-weight: 600; color: var(--off-black); font-family: 'DM Mono', monospace; }
 .view-link { font-size: 11px; color: var(--dark-gray); margin-top: 12px; cursor: pointer; font-family: 'DM Mono', monospace; letter-spacing: 0.04em; }
-.view-link:hover { color: var(--coral); }
+.view-link:hover { color: var(--black); }
 
 /* ── Middle Row ───────────────────────────────────────── */
 .middle-grid {
@@ -520,8 +548,8 @@ a { text-decoration: none; color: inherit; }
 .pes-icon-wrap.next svg { stroke: var(--white); }
 .pes-head { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 8px; font-family: 'DM Mono', monospace; }
 .pes-head.wins { color: var(--green); }
-.pes-head.opps { color: #b89f00; }
-.pes-head.next { color: var(--coral); }
+.pes-head.opps { color: var(--dark-gray); }
+.pes-head.next { color: var(--off-black); }
 .pes-body { font-size: 12px; color: var(--dark-gray); line-height: 1.65; }
 .pes-body ul { padding-left: 15px; }
 .pes-body li { margin-bottom: 5px; color: var(--off-black); }
@@ -571,7 +599,7 @@ a { text-decoration: none; color: inherit; }
             <svg width="58" height="58" viewBox="0 0 58 58" fill="none">
               <circle cx="29" cy="29" r="23" stroke="var(--light-gray)" stroke-width="5"/>
               <circle id="health-ring" cx="29" cy="29" r="23"
-                stroke="#058DC7" stroke-width="5"
+                stroke="#1f4e72" stroke-width="5"
                 stroke-dasharray="144.5" stroke-dashoffset="55"
                 stroke-linecap="round"/>
             </svg>
@@ -693,16 +721,19 @@ a { text-decoration: none; color: inherit; }
 
   <div class="topbar">
     <div class="topbar-inner">
-      <div>
-        <h1>Coach Curriculum Dashboard</h1>
-        <div class="meta">
-          <span>Coach: <strong id="det-name">—</strong></span>
-          <span class="meta-sep">|</span>
-          <span>Club: <strong id="det-club">SoHo</strong></span>
-          <span class="meta-sep">|</span>
-          <span>Ramp Stage: <strong id="det-ramp">—</strong></span>
-          <span class="meta-sep">|</span>
-          <span>Pay Period: <strong id="det-pp">May 03</strong></span>
+      <div style="display:flex;align-items:center;gap:18px">
+        <button class="topbar-back" onclick="showOverview()">← Dashboard</button>
+        <div>
+          <h1>Coach Curriculum Dashboard</h1>
+          <div class="meta">
+            <span>Coach: <strong id="det-name">—</strong></span>
+            <span class="meta-sep">·</span>
+            <span>Club: <strong id="det-club">SoHo</strong></span>
+            <span class="meta-sep">·</span>
+            <span>Stage: <strong id="det-ramp">—</strong></span>
+            <span class="meta-sep">·</span>
+            <span>Period: <strong id="det-pp">May 03</strong></span>
+          </div>
         </div>
       </div>
       <div class="data-source">
@@ -742,17 +773,17 @@ a { text-decoration: none; color: inherit; }
             <div class="dev-diagnosis" id="dev-diag">—</div>
             <div class="weight-row">
               <div class="w-item">
-                <div class="w-dot" style="background:#F26B43"></div>
+                <div class="w-dot" style="background:#7a2d1f"></div>
                 <div class="w-lbl">Performance</div>
                 <div class="w-pct">50%</div>
               </div>
               <div class="w-item">
-                <div class="w-dot" style="background:#058DC7"></div>
+                <div class="w-dot" style="background:#1f4e72"></div>
                 <div class="w-lbl">Programming</div>
                 <div class="w-pct">30%</div>
               </div>
               <div class="w-item">
-                <div class="w-dot" style="background:#158158"></div>
+                <div class="w-dot" style="background:#1a5c38"></div>
                 <div class="w-lbl">Professionalism</div>
                 <div class="w-pct">20%</div>
               </div>
@@ -769,7 +800,7 @@ a { text-decoration: none; color: inherit; }
             <svg width="50" height="50" viewBox="0 0 50 50" fill="none">
               <circle cx="25" cy="25" r="20" stroke="var(--light-gray)" stroke-width="4.5"/>
               <circle id="prof-ring" cx="25" cy="25" r="20"
-                stroke="#158158" stroke-width="4.5"
+                stroke="#1a5c38" stroke-width="4.5"
                 stroke-dasharray="125.7" stroke-dashoffset="67" stroke-linecap="round"/>
             </svg>
             <div class="ring-num" id="prof-num" style="font-size:13px">—</div>
@@ -788,7 +819,7 @@ a { text-decoration: none; color: inherit; }
             <svg width="50" height="50" viewBox="0 0 50 50" fill="none">
               <circle cx="25" cy="25" r="20" stroke="var(--light-gray)" stroke-width="4.5"/>
               <circle id="prog-ring" cx="25" cy="25" r="20"
-                stroke="#058DC7" stroke-width="4.5"
+                stroke="#1f4e72" stroke-width="4.5"
                 stroke-dasharray="125.7" stroke-dashoffset="38" stroke-linecap="round"/>
             </svg>
             <div class="ring-num" id="prog-num" style="font-size:13px">—</div>
@@ -807,7 +838,7 @@ a { text-decoration: none; color: inherit; }
             <svg width="50" height="50" viewBox="0 0 50 50" fill="none">
               <circle cx="25" cy="25" r="20" stroke="var(--light-gray)" stroke-width="4.5"/>
               <circle id="perf-ring" cx="25" cy="25" r="20"
-                stroke="#F26B43" stroke-width="4.5"
+                stroke="#7a2d1f" stroke-width="4.5"
                 stroke-dasharray="125.7" stroke-dashoffset="58" stroke-linecap="round"/>
             </svg>
             <div class="ring-num" id="perf-num" style="font-size:13px">—</div>
@@ -1019,11 +1050,11 @@ function statusLabel(score) {
   return score >= 75 ? 'Top Performer' : score >= 50 ? 'Building' : 'Needs Attention';
 }
 
-/* Ring color — playbook palette */
+/* Ring color — charcoal-tinted, restrained EQX palette */
 function ringStroke(score) {
-  if (score >= 75) return '#158158';   /* green */
-  if (score >= 50) return '#058DC7';   /* blue */
-  return '#F26B43';                     /* coral */
+  if (score >= 75) return '#1a5c38';  /* deep forest green */
+  if (score >= 50) return '#1f4e72';  /* steel blue */
+  return '#7a2d1f';                    /* deep rust */
 }
 
 function setRing(el, score, circ) {
@@ -1195,10 +1226,7 @@ function renderBand(b, label, coaches) {
   if (!coaches.length) return '';
   const isExp  = expanded[b];
   const visible = isExp ? coaches : coaches.slice(0, 4);
-  const rows   = [];
-  for (let i = 0; i < visible.length; i += 4) {
-    rows.push(`<div class="coach-grid">${visible.slice(i, i+4).map(c => coachCardHTML(c)).join('')}</div>`);
-  }
+  const html = visible.map(c => coachCardHTML(c)).join('');
   const btnTxt = isExp
     ? `Show less ↑`
     : (coaches.length > 4 ? `Show all ${coaches.length} coaches →` : '');
@@ -1208,33 +1236,64 @@ function renderBand(b, label, coaches) {
       <span class="band-lbl ${b}">${label}</span>
       <span class="band-cnt">${coaches.length} coaches</span>
     </div>
-    ${rows.join('')}
+    <div class="coach-card-grid">${html}</div>
     ${btn}
   </div>`;
 }
 
+/* Projected sessions: activeClients × avgProgramFrequency × 2 weeks, capped at 2× target */
+function getProjectedSessions(m) {
+  if (!m.activeClients) return 0;
+  const freq = Math.max(m.avgProgramFrequency || 1, 0.5);
+  return Math.min(Math.round(m.activeClients * freq * 2), B.sessions * 2);
+}
+
 function coachCardHTML(c) {
-  const sc  = c.s.overall;
-  const circ = 2 * Math.PI * 17;
-  const off  = (circ - (sc/100)*circ).toFixed(1);
-  const col  = ringStroke(sc);
-  return `
-    <div class="cc" onclick="openCoach(${c.id})">
-      <div class="cc-bar ${c.b}"></div>
-      <div class="cc-top">
-        <div><div class="cc-name">${c.name}</div><div class="cc-level">${c.level}</div></div>
-        <div class="ring" style="width:42px;height:42px">
-          <svg width="42" height="42" viewBox="0 0 42 42" fill="none">
-            <circle cx="21" cy="21" r="17" stroke="var(--light-gray)" stroke-width="4"/>
-            <circle cx="21" cy="21" r="17" stroke="${col}" stroke-width="4"
-              stroke-dasharray="${circ.toFixed(1)}" stroke-dashoffset="${off}" stroke-linecap="round"/>
-          </svg>
-          <div class="ring-num" style="font-size:12px;font-weight:700">${sc}</div>
-        </div>
+  const sc        = c.s.overall;
+  const col       = ringStroke(sc);
+  const stageNote = c.isRamping && c.rampStage ? ' · ' + c.rampStage : '';
+  const completed = c.m.sessionsCompleted;
+  const projected = getProjectedSessions(c.m);
+  const variance  = completed - projected;     // positive = ahead, negative = behind
+  const tgt       = B.sessions;               // 40
+
+  const compPct = Math.min(100, Math.round(completed / tgt * 100));
+  const projPct = Math.min(100, Math.round(projected / tgt * 100));
+  const varPct  = Math.min(100, Math.round(Math.abs(variance) / Math.max(tgt * 0.5, 1) * 100));
+  const varCol  = variance >= 0 ? '#1a5c38' : '#7a2d1f';
+  const varDisp = variance > 0 ? '+' + variance : String(variance);
+
+  const circ = (2 * Math.PI * 19).toFixed(1); // r=19, total size 50px
+
+  function mkRing(pct, color, val, lbl) {
+    const off = ((1 - pct / 100) * circ).toFixed(1);
+    return `<div class="cc2-ring-wrap">
+      <div class="cc2-ring-cont">
+        <svg width="50" height="50" viewBox="0 0 50 50" fill="none" style="transform:rotate(-90deg)">
+          <circle cx="25" cy="25" r="19" stroke="var(--light-gray)" stroke-width="4.5"/>
+          <circle cx="25" cy="25" r="19" stroke="${color}" stroke-width="4.5"
+            stroke-dasharray="${circ}" stroke-dashoffset="${off}" stroke-linecap="round"/>
+        </svg>
+        <div class="cc2-ring-val">${val}</div>
       </div>
-      <div class="cc-stats">
-        <div><div class="cc-stat-lbl">Clients</div><div class="cc-stat-val">${c.m.activeClients}</div></div>
-        <div><div class="cc-stat-lbl">Sessions</div><div class="cc-stat-val">${c.m.sessionsCompleted}</div></div>
+      <div class="cc2-ring-lbl">${lbl}</div>
+    </div>`;
+  }
+
+  return `
+    <div class="cc2" onclick="openCoach(${c.id})">
+      <div class="cc2-accent" style="background:${col}"></div>
+      <div class="cc2-top">
+        <div>
+          <div class="cc2-name">${c.name}</div>
+          <div class="cc2-meta">${c.level}${stageNote}</div>
+        </div>
+        <div class="cc2-score" style="color:${col}">${sc}</div>
+      </div>
+      <div class="cc2-rings">
+        ${mkRing(compPct, col, completed, 'Cmpltd')}
+        ${mkRing(projPct, '#1f4e72', projected, 'Proj')}
+        ${mkRing(varPct, varCol, varDisp, 'Var')}
       </div>
     </div>`;
 }
@@ -1248,9 +1307,12 @@ function toggleBand(b) {
 /* ══════════════════════════════════════════════════════════
    RAMP PYRAMID — driven by real_coaches.js isRamping flag
 ════════════════════════════════════════════════════════════ */
+// STAGES rendered top→bottom in DOM. Week 1 at BOTTOM (widest = foundation), Month 3 at TOP (narrowest = peak)
 const STAGES = ['Month 3','Month 2','Week 4','Week 3','Week 2','Week 1'];
-const PYR_COLORS = ['#158158','#0fa86c','#24CBE5','#058DC7','#F26B43','#e8552e'];
-const PYR_WIDTHS = [190,162,134,108,82,58];
+// Colors: top→bottom = peak gold → steel blue → foundation green
+const PYR_COLORS = ['#C3A579','#3d5a70','#1F4E72','#234f6a','#1C5547','#1A5C38'];
+// Widths: top→bottom = narrow peak → wide foundation
+const PYR_WIDTHS = [70,98,130,162,194,228];
 
 function renderPyramid() {
   const ramping = window.REAL_COACHES.filter(c => c.isRamping);
@@ -1480,10 +1542,12 @@ function renderDetailPyramid(m) {
   const convRate  = m.opportunitiesCreated > 0 ? Math.round(m.conversions/m.opportunitiesCreated*100) : 0;
   const ramboReady = m.activeClients >= 15 && convRate >= 40 && m.recurringClients >= 10;
 
+  // Top→bottom: RAMBO (peak, narrow), CLIENTS (mid), ACTIVITY (foundation, wide)
+  // Colors match ramp pyramid: peak=gold, mid=blue, foundation=green
   const layers = [
-    { label:'RAMBO\nREADINESS', w:110, h:50, bg: ramboReady ? '#158158' : '#24CBE5' },
-    { label:'CLIENTS',          w:142, h:44, bg:'#058DC7' },
-    { label:'ACTIVITY',         w:174, h:44, bg:'#F26B43' }
+    { label:'RAMBO\nREADINESS', w:110, h:48, bg: ramboReady ? '#C3A579' : '#3d5a70' },
+    { label:'CLIENTS',          w:142, h:44, bg:'#1F4E72' },
+    { label:'ACTIVITY',         w:174, h:44, bg:'#1A5C38' }
   ];
 
   document.getElementById('pdc-pyramid').innerHTML = layers.map(l =>
