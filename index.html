@@ -9,35 +9,47 @@
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 /* ═══════════════════════════════════════════════════════════
-   EQX BRAND SYSTEM
-   Primary: Black + White
-   Secondary: Off-Black #151515, Dark Gray #7A7A7A, Gray #AAAAAA
+   EQX BRAND SYSTEM — Coach Curriculum Playbook Palette
+   Primary: Coral #F26B43  |  Green #158158  |  Blue #058DC7
+   Secondary: Teal #24CBE5  |  Yellow #F5D800  |  Off-Black #231F20
    Typography: Space Grotesk (≈ Equinox Sans grotesque) + DM Mono (≈ Messina Mono)
 ═══════════════════════════════════════════════════════════ */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
   /* EQX Brand Colors */
-  --black:      #000000;
-  --off-black:  #151515;
-  --dark-gray:  #7A7A7A;
-  --mid-gray:   #AAAAAA;
-  --light-gray: #E0E0E0;
-  --near-white: #F5F5F5;
+  --black:      #231F20;
+  --off-black:  #2d2929;
+  --dark-gray:  #6B6B6B;
+  --mid-gray:   #9E9E9E;
+  --light-gray: #E3E3E3;
+  --near-white: #F6F6F4;
   --white:      #FFFFFF;
 
-  /* Functional status tones (derived from B&W palette) */
-  --top-color:      #000000;
-  --top-bg:         #F0F0F0;
-  --building-color: #7A7A7A;
-  --building-bg:    #F5F5F5;
-  --needs-color:    #AAAAAA;
-  --needs-bg:       #FAFAFA;
+  /* Playbook Accent Palette */
+  --coral:     #F26B43;
+  --coral-bg:  #FEF0EB;
+  --green:     #158158;
+  --green-bg:  #E8F5EE;
+  --blue:      #058DC7;
+  --blue-bg:   #E6F4FB;
+  --teal:      #24CBE5;
+  --teal-bg:   #E8FAFB;
+  --yellow:    #F5D800;
+  --yellow-bg: #FFFCE6;
+
+  /* Functional status tones — vibrant */
+  --top-color:      var(--green);
+  --top-bg:         var(--green-bg);
+  --building-color: var(--blue);
+  --building-bg:    var(--blue-bg);
+  --needs-color:    var(--coral);
+  --needs-bg:       var(--coral-bg);
 
   /* Ring stroke colors */
-  --ring-top:      #000000;
-  --ring-building: #7A7A7A;
-  --ring-needs:    #BEBEBE;
+  --ring-top:      var(--green);
+  --ring-building: var(--blue);
+  --ring-needs:    var(--coral);
   --ring-track:    #E8E8E8;
 
   /* Layout */
@@ -55,6 +67,15 @@
 }
 
 html, body { height: 100%; background: var(--near-white); }
+
+/* ── Topbar accent stripe ─────────────────────────────── */
+.topbar::before {
+  content: '';
+  display: block;
+  height: 3px;
+  background: linear-gradient(90deg, var(--coral) 0%, var(--yellow) 35%, var(--green) 65%, var(--teal) 100%);
+  margin-bottom: -1px;
+}
 button { cursor: pointer; border: none; background: none; font: inherit; color: inherit; }
 a { text-decoration: none; color: inherit; }
 
@@ -82,6 +103,7 @@ a { text-decoration: none; color: inherit; }
   font-size: 22px; font-weight: 700;
   letter-spacing: -0.4px; color: var(--black); line-height: 1.1;
 }
+.topbar h1 span.brand-word { color: var(--coral); }
 .topbar .meta {
   margin-top: 5px; font-size: 12px; color: var(--dark-gray);
   display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
@@ -154,10 +176,10 @@ a { text-decoration: none; color: inherit; }
   letter-spacing: 0.06em; text-transform: uppercase;
   font-family: 'DM Mono', monospace;
 }
-.badge-top      { background: var(--off-black); color: var(--white); }
-.badge-building { background: #EBEBEB; color: var(--dark-gray); border: 1px solid #D5D5D5; }
-.badge-needs    { background: var(--near-white); color: var(--mid-gray); border: 1px solid var(--light-gray); }
-.badge-ramp     { background: var(--off-black); color: var(--white); }
+.badge-top      { background: var(--green-bg); color: var(--green); border: 1px solid rgba(21,129,88,0.25); }
+.badge-building { background: var(--blue-bg); color: var(--blue); border: 1px solid rgba(5,141,199,0.25); }
+.badge-needs    { background: var(--coral-bg); color: var(--coral); border: 1px solid rgba(242,107,67,0.25); }
+.badge-ramp     { background: var(--teal-bg); color: var(--teal); border: 1px solid rgba(36,203,229,0.3); }
 
 /* ═══════════════════════════════════════════════════════════
    VIEW 1 — KPI CARDS
@@ -174,16 +196,16 @@ a { text-decoration: none; color: inherit; }
   cursor: pointer;
   transition: box-shadow 0.15s, border-color 0.15s;
 }
-.kpi-card:hover { box-shadow: var(--shadow-lg); border-color: var(--mid-gray); }
-.kpi-card.kpi-selected { border-color: var(--black); box-shadow: 0 0 0 1px var(--black); }
+.kpi-card:hover { box-shadow: var(--shadow-lg); border-color: var(--coral); }
+.kpi-card.kpi-selected { border-color: var(--coral); box-shadow: 0 0 0 2px rgba(242,107,67,0.2); }
 .kpi-card .kpi-lbl { margin-bottom: 14px; }
 .kpi-body { display: flex; align-items: center; gap: 14px; }
 .kpi-icon {
   width: 40px; height: 40px; border-radius: 50%;
   display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-  background: var(--near-white); border: 1.5px solid var(--light-gray);
+  background: var(--coral-bg); border: 1.5px solid rgba(242,107,67,0.2);
 }
-.kpi-icon svg { width: 18px; height: 18px; stroke: var(--off-black); }
+.kpi-icon svg { width: 18px; height: 18px; stroke: var(--coral); }
 .kpi-num {
   font-size: 34px; font-weight: 700;
   letter-spacing: -1.5px; line-height: 1; color: var(--black);
@@ -217,7 +239,7 @@ a { text-decoration: none; color: inherit; }
 .level-name { margin-bottom: 8px; }
 .level-count { font-size: 38px; font-weight: 700; letter-spacing: -2px; color: var(--black); margin-bottom: 12px; }
 .level-bar-track { height: 4px; background: var(--light-gray); border-radius: 2px; margin-bottom: 6px; }
-.level-bar-fill  { height: 100%; border-radius: 2px; background: var(--black); }
+.level-bar-fill  { height: 100%; border-radius: 2px; background: linear-gradient(90deg, var(--coral), var(--yellow)); }
 .level-pct-txt { font-size: 12px; color: var(--dark-gray); }
 .level-of-txt  { font-size: 11px; color: var(--mid-gray); margin-top: 3px; font-family: 'DM Mono', monospace; }
 
@@ -239,7 +261,7 @@ a { text-decoration: none; color: inherit; }
   border-radius: var(--radius-sm); padding: 8px 12px; width: 210px;
   transition: border-color 0.15s;
 }
-.search-wrap:focus-within { border-color: var(--black); }
+.search-wrap:focus-within { border-color: var(--coral); }
 .search-wrap input {
   border: none; background: none; font: inherit;
   font-size: 12px; color: var(--off-black); outline: none; width: 100%;
@@ -252,9 +274,9 @@ a { text-decoration: none; color: inherit; }
 .perf-band:last-child { margin-bottom: 0; }
 .band-head { display: flex; align-items: baseline; gap: 10px; margin-bottom: 14px; }
 .band-lbl { font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
-.band-lbl.top      { color: var(--black); }
-.band-lbl.building { color: var(--dark-gray); }
-.band-lbl.needs    { color: var(--mid-gray); }
+.band-lbl.top      { color: var(--green); }
+.band-lbl.building { color: var(--blue); }
+.band-lbl.needs    { color: var(--coral); }
 .band-cnt { font-size: 11px; color: var(--mid-gray); font-family: 'DM Mono', monospace; }
 
 /* Coach card grid */
@@ -266,11 +288,11 @@ a { text-decoration: none; color: inherit; }
   transition: box-shadow 0.12s, border-color 0.12s;
   background: var(--white);
 }
-.cc:hover { box-shadow: var(--shadow-lg); border-color: var(--dark-gray); }
+.cc:hover { box-shadow: var(--shadow-lg); border-color: var(--coral); }
 .cc-bar { position: absolute; left: 0; top: 10px; bottom: 10px; width: 3px; border-radius: 0 2px 2px 0; }
-.cc-bar.top      { background: var(--black); }
-.cc-bar.building { background: var(--dark-gray); }
-.cc-bar.needs    { background: var(--mid-gray); }
+.cc-bar.top      { background: var(--green); }
+.cc-bar.building { background: var(--blue); }
+.cc-bar.needs    { background: var(--coral); }
 .cc-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 12px; }
 .cc-name { font-size: 12px; font-weight: 600; color: var(--black); line-height: 1.2; }
 .cc-level { font-size: 10px; color: var(--dark-gray); margin-top: 2px; font-family: 'DM Mono', monospace; }
@@ -286,7 +308,7 @@ a { text-decoration: none; color: inherit; }
   transition: background 0.12s, color 0.12s;
   font-weight: 500;
 }
-.show-all-btn:hover { background: var(--near-white); color: var(--off-black); }
+.show-all-btn:hover { background: var(--coral-bg); color: var(--coral); border-color: rgba(242,107,67,0.3); }
 
 /* ═══════════════════════════════════════════════════════════
    RAMP PYRAMID PANEL
@@ -315,7 +337,7 @@ a { text-decoration: none; color: inherit; }
   font-family: 'DM Mono', monospace;
 }
 .pyr-row:hover .pyr-bar { opacity: 0.85; }
-.pyr-row.pyr-selected .pyr-bar { outline: 2px solid var(--black); outline-offset: 2px; }
+.pyr-row.pyr-selected .pyr-bar { outline: 2px solid var(--coral); outline-offset: 2px; }
 .pyr-count { font-size: 11px; color: var(--dark-gray); width: 18px; text-align: right; font-family: 'DM Mono', monospace; }
 
 /* Stage detail */
@@ -332,7 +354,7 @@ a { text-decoration: none; color: inherit; }
 .ramp-coach-row:hover { background: var(--near-white); border-radius: 6px; padding-left: 6px; }
 .ramp-avatar {
   width: 30px; height: 30px; border-radius: 50%;
-  background: var(--off-black); color: var(--white);
+  background: linear-gradient(135deg, var(--coral) 0%, #e8552e 100%); color: var(--white);
   font-size: 10px; font-weight: 700;
   display: flex; align-items: center; justify-content: center;
   flex-shrink: 0; font-family: 'DM Mono', monospace;
@@ -352,7 +374,7 @@ a { text-decoration: none; color: inherit; }
   font-family: 'DM Mono', monospace; letter-spacing: 0.04em;
   transition: color 0.12s;
 }
-.back-btn:hover { color: var(--black); }
+.back-btn:hover { color: var(--coral); }
 
 /* ── Pay Period Toggle ────────────────────────────────── */
 .pp-toggle { display: flex; gap: 6px; flex-wrap: wrap; margin: 14px 0 22px; }
@@ -365,7 +387,7 @@ a { text-decoration: none; color: inherit; }
   font-family: 'DM Mono', monospace; letter-spacing: 0.04em;
 }
 .pp-btn:hover { border-color: var(--dark-gray); color: var(--off-black); }
-.pp-btn.pp-active { background: var(--black); color: var(--white); border-color: var(--black); }
+.pp-btn.pp-active { background: var(--coral); color: var(--white); border-color: var(--coral); }
 
 /* ── Score + Pillars ──────────────────────────────────── */
 .score-grid {
@@ -383,7 +405,7 @@ a { text-decoration: none; color: inherit; }
 .dev-diagnosis { font-size: 12px; color: var(--dark-gray); line-height: 1.55; margin-bottom: 16px; max-width: 220px; }
 .weight-row { display: flex; gap: 14px; flex-wrap: wrap; }
 .w-item { display: flex; flex-direction: column; gap: 3px; }
-.w-dot { width: 7px; height: 7px; border-radius: 50%; }
+.w-dot { width: 8px; height: 8px; border-radius: 50%; }
 .w-lbl { font-size: 9px; color: var(--dark-gray); font-family: 'DM Mono', monospace; text-transform: uppercase; letter-spacing: 0.08em; }
 .w-pct { font-size: 11px; font-weight: 700; color: var(--off-black); }
 
@@ -396,7 +418,7 @@ a { text-decoration: none; color: inherit; }
 .pk-name { color: var(--dark-gray); }
 .pk-val { font-weight: 600; color: var(--off-black); font-family: 'DM Mono', monospace; }
 .view-link { font-size: 11px; color: var(--dark-gray); margin-top: 12px; cursor: pointer; font-family: 'DM Mono', monospace; letter-spacing: 0.04em; }
-.view-link:hover { color: var(--black); }
+.view-link:hover { color: var(--coral); }
 
 /* ── Middle Row ───────────────────────────────────────── */
 .middle-grid {
@@ -428,10 +450,11 @@ a { text-decoration: none; color: inherit; }
 .comp-cell-lbl { font-size: 9px; color: var(--mid-gray); text-transform: uppercase; letter-spacing: 0.10em; font-family: 'DM Mono', monospace; }
 .comp-cell-val { font-size: 18px; font-weight: 700; color: var(--black); }
 .comp-payout-cell {
-  background: var(--black); border-radius: 8px;
+  background: linear-gradient(135deg, var(--green) 0%, #0fa86c 100%);
+  border-radius: 8px;
   padding: 10px 14px;
 }
-.comp-payout-cell .comp-cell-lbl { color: rgba(255,255,255,0.5); }
+.comp-payout-cell .comp-cell-lbl { color: rgba(255,255,255,0.7); }
 .comp-payout-cell .comp-cell-val { font-size: 22px; color: var(--white); }
 .comp-lines {
   display: grid; grid-template-columns: repeat(3,1fr);
@@ -448,16 +471,16 @@ a { text-decoration: none; color: inherit; }
 .ppp-msg { font-size: 13px; font-weight: 600; color: var(--off-black); margin-bottom: 10px; }
 .ppp-msg strong { color: var(--black); }
 .prog-track { background: var(--light-gray); border-radius: 3px; height: 6px; margin-bottom: 6px; }
-.prog-fill { height: 100%; border-radius: 3px; background: var(--black); transition: width 0.4s; }
+.prog-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, var(--coral), var(--yellow)); transition: width 0.4s; }
 .ppp-frac { font-size: 11px; color: var(--dark-gray); margin-bottom: 18px; font-family: 'DM Mono', monospace; }
 .rate-grid { display: grid; grid-template-columns: repeat(6,1fr); gap: 4px; }
 .rate-cell {
   border-radius: 5px; padding: 6px 3px; text-align: center;
   background: var(--near-white); border: 1.5px solid var(--light-gray);
 }
-.rate-cell.cur { background: var(--black); border-color: var(--black); }
+.rate-cell.cur { background: var(--coral); border-color: var(--coral); }
 .rate-sessions { font-size: 9px; color: var(--mid-gray); font-family: 'DM Mono', monospace; }
-.rate-cell.cur .rate-sessions { color: rgba(255,255,255,0.5); }
+.rate-cell.cur .rate-sessions { color: rgba(255,255,255,0.7); }
 .rate-rate { font-size: 11px; font-weight: 700; color: var(--off-black); margin-top: 2px; }
 .rate-cell.cur .rate-rate { color: var(--white); }
 
@@ -473,10 +496,10 @@ a { text-decoration: none; color: inherit; }
 .ksi-sub { font-size: 11px; color: var(--dark-gray); margin-top: 2px; font-family: 'DM Mono', monospace; }
 .ksi-icon {
   width: 38px; height: 38px; border-radius: 50%;
-  background: var(--near-white); border: 1.5px solid var(--light-gray);
+  background: var(--teal-bg); border: 1.5px solid rgba(36,203,229,0.3);
   display: flex; align-items: center; justify-content: center;
 }
-.ksi-icon svg { width: 18px; height: 18px; stroke: var(--off-black); }
+.ksi-icon svg { width: 18px; height: 18px; stroke: var(--teal); }
 
 /* ── Progress Elevation Steps ─────────────────────────── */
 .pes-head-row { display: flex; align-items: baseline; gap: 12px; margin-bottom: 14px; }
@@ -491,14 +514,16 @@ a { text-decoration: none; color: inherit; }
   margin-bottom: 12px;
 }
 .pes-icon-wrap svg { width: 17px; height: 17px; }
-.pes-icon-wrap.wins { background: var(--near-white); border: 1.5px solid var(--light-gray); }
-.pes-icon-wrap.opps { background: var(--near-white); border: 1.5px solid var(--light-gray); }
-.pes-icon-wrap.next { background: var(--black); }
+.pes-icon-wrap.wins { background: var(--green-bg); border: 1.5px solid rgba(21,129,88,0.2); }
+.pes-icon-wrap.wins svg { stroke: var(--green); }
+.pes-icon-wrap.opps { background: var(--yellow-bg); border: 1.5px solid rgba(245,216,0,0.4); }
+.pes-icon-wrap.opps svg { stroke: #b89f00; }
+.pes-icon-wrap.next { background: linear-gradient(135deg, var(--coral) 0%, #e8552e 100%); border: none; }
 .pes-icon-wrap.next svg { stroke: var(--white); }
 .pes-head { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 8px; font-family: 'DM Mono', monospace; }
-.pes-head.wins { color: var(--off-black); }
-.pes-head.opps { color: var(--dark-gray); }
-.pes-head.next { color: var(--black); }
+.pes-head.wins { color: var(--green); }
+.pes-head.opps { color: #b89f00; }
+.pes-head.next { color: var(--coral); }
 .pes-body { font-size: 12px; color: var(--dark-gray); line-height: 1.65; }
 .pes-body ul { padding-left: 15px; }
 .pes-body li { margin-bottom: 5px; color: var(--off-black); }
@@ -548,7 +573,7 @@ a { text-decoration: none; color: inherit; }
             <svg width="58" height="58" viewBox="0 0 58 58" fill="none">
               <circle cx="29" cy="29" r="23" stroke="var(--light-gray)" stroke-width="5"/>
               <circle id="health-ring" cx="29" cy="29" r="23"
-                stroke="var(--black)" stroke-width="5"
+                stroke="#058DC7" stroke-width="5"
                 stroke-dasharray="144.5" stroke-dashoffset="55"
                 stroke-linecap="round"/>
             </svg>
@@ -719,17 +744,17 @@ a { text-decoration: none; color: inherit; }
             <div class="dev-diagnosis" id="dev-diag">—</div>
             <div class="weight-row">
               <div class="w-item">
-                <div class="w-dot" style="background:var(--black)"></div>
+                <div class="w-dot" style="background:#F26B43"></div>
                 <div class="w-lbl">Performance</div>
                 <div class="w-pct">50%</div>
               </div>
               <div class="w-item">
-                <div class="w-dot" style="background:var(--dark-gray)"></div>
+                <div class="w-dot" style="background:#058DC7"></div>
                 <div class="w-lbl">Programming</div>
                 <div class="w-pct">30%</div>
               </div>
               <div class="w-item">
-                <div class="w-dot" style="background:var(--mid-gray)"></div>
+                <div class="w-dot" style="background:#158158"></div>
                 <div class="w-lbl">Professionalism</div>
                 <div class="w-pct">20%</div>
               </div>
@@ -746,7 +771,7 @@ a { text-decoration: none; color: inherit; }
             <svg width="50" height="50" viewBox="0 0 50 50" fill="none">
               <circle cx="25" cy="25" r="20" stroke="var(--light-gray)" stroke-width="4.5"/>
               <circle id="prof-ring" cx="25" cy="25" r="20"
-                stroke="var(--black)" stroke-width="4.5"
+                stroke="#158158" stroke-width="4.5"
                 stroke-dasharray="125.7" stroke-dashoffset="67" stroke-linecap="round"/>
             </svg>
             <div class="ring-num" id="prof-num" style="font-size:13px">—</div>
@@ -765,7 +790,7 @@ a { text-decoration: none; color: inherit; }
             <svg width="50" height="50" viewBox="0 0 50 50" fill="none">
               <circle cx="25" cy="25" r="20" stroke="var(--light-gray)" stroke-width="4.5"/>
               <circle id="prog-ring" cx="25" cy="25" r="20"
-                stroke="var(--dark-gray)" stroke-width="4.5"
+                stroke="#058DC7" stroke-width="4.5"
                 stroke-dasharray="125.7" stroke-dashoffset="38" stroke-linecap="round"/>
             </svg>
             <div class="ring-num" id="prog-num" style="font-size:13px">—</div>
@@ -784,7 +809,7 @@ a { text-decoration: none; color: inherit; }
             <svg width="50" height="50" viewBox="0 0 50 50" fill="none">
               <circle cx="25" cy="25" r="20" stroke="var(--light-gray)" stroke-width="4.5"/>
               <circle id="perf-ring" cx="25" cy="25" r="20"
-                stroke="var(--dark-gray)" stroke-width="4.5"
+                stroke="#F26B43" stroke-width="4.5"
                 stroke-dasharray="125.7" stroke-dashoffset="58" stroke-linecap="round"/>
             </svg>
             <div class="ring-num" id="perf-num" style="font-size:13px">—</div>
@@ -996,11 +1021,11 @@ function statusLabel(score) {
   return score >= 75 ? 'Top Performer' : score >= 50 ? 'Building' : 'Needs Attention';
 }
 
-/* Ring color in EQX B&W spectrum */
+/* Ring color — playbook palette */
 function ringStroke(score) {
-  if (score >= 75) return 'var(--ring-top)';
-  if (score >= 50) return 'var(--ring-building)';
-  return 'var(--ring-needs)';
+  if (score >= 75) return '#158158';   /* green */
+  if (score >= 50) return '#058DC7';   /* blue */
+  return '#F26B43';                     /* coral */
 }
 
 function setRing(el, score, circ) {
@@ -1226,7 +1251,7 @@ function toggleBand(b) {
    RAMP PYRAMID — driven by real_coaches.js isRamping flag
 ════════════════════════════════════════════════════════════ */
 const STAGES = ['Month 3','Month 2','Week 4','Week 3','Week 2','Week 1'];
-const PYR_COLORS = ['#151515','#2d2d2d','#4a4a4a','#686868','#888888','#aaaaaa'];
+const PYR_COLORS = ['#158158','#0fa86c','#24CBE5','#058DC7','#F26B43','#e8552e'];
 const PYR_WIDTHS = [190,162,134,108,82,58];
 
 function renderPyramid() {
@@ -1458,9 +1483,9 @@ function renderDetailPyramid(m) {
   const ramboReady = m.activeClients >= 15 && convRate >= 40 && m.recurringClients >= 10;
 
   const layers = [
-    { label:'RAMBO\nREADINESS', w:110, h:50, bg: ramboReady ? '#151515' : '#555' },
-    { label:'CLIENTS',          w:142, h:44, bg:'#2d2d2d' },
-    { label:'ACTIVITY',         w:174, h:44, bg:'#888888' }
+    { label:'RAMBO\nREADINESS', w:110, h:50, bg: ramboReady ? '#158158' : '#24CBE5' },
+    { label:'CLIENTS',          w:142, h:44, bg:'#058DC7' },
+    { label:'ACTIVITY',         w:174, h:44, bg:'#F26B43' }
   ];
 
   document.getElementById('pdc-pyramid').innerHTML = layers.map(l =>
