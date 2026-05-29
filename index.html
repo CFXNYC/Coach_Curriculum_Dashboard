@@ -380,27 +380,28 @@ a { text-decoration: none; color: inherit; }
 /* ═══════════════════════════════════════════════════════════
    VIEW 2 — NAVIGATION
 ═══════════════════════════════════════════════════════════ */
-/* In-topbar back button — primary nav */
+/* In-topbar back button — primary nav (high contrast, always visible) */
 .topbar-back {
-  display: inline-flex; align-items: center; gap: 5px;
-  font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
-  color: rgba(255,255,255,0.45);
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--white);
   font-family: 'DM Mono', monospace;
-  border: 1px solid rgba(255,255,255,0.12);
-  border-radius: var(--radius-sm); padding: 5px 10px;
-  transition: color 0.12s, border-color 0.12s, background 0.12s;
-  cursor: pointer; background: none; white-space: nowrap; flex-shrink: 0;
+  border: 1px solid rgba(255,255,255,0.4);
+  border-radius: var(--radius-sm); padding: 6px 12px;
+  transition: background 0.12s, border-color 0.12s;
+  cursor: pointer; background: rgba(255,255,255,0.08); white-space: nowrap; flex-shrink: 0;
 }
-.topbar-back:hover { color: var(--white); border-color: rgba(255,255,255,0.35); background: rgba(255,255,255,0.06); }
-/* In-page back button — secondary fallback */
+.topbar-back:hover { background: rgba(255,255,255,0.16); border-color: rgba(255,255,255,0.65); }
+/* In-page back button — secondary (visible below topbar) */
 .back-btn {
   display: inline-flex; align-items: center; gap: 6px;
-  font-size: 11px; color: var(--mid-gray);
+  font-size: 11px; color: var(--dark-gray);
   margin: 18px 0 0; cursor: pointer;
   font-family: 'DM Mono', monospace; letter-spacing: 0.04em;
-  transition: color 0.12s;
+  border-bottom: 1px solid var(--light-gray); padding-bottom: 2px;
+  transition: color 0.12s, border-color 0.12s;
 }
-.back-btn:hover { color: var(--black); }
+.back-btn:hover { color: var(--black); border-color: var(--dark-gray); }
 
 /* ── Pay Period Toggle ────────────────────────────────── */
 .pp-toggle { display: flex; gap: 6px; flex-wrap: wrap; margin: 14px 0 22px; }
@@ -554,6 +555,28 @@ a { text-decoration: none; color: inherit; }
 .pes-body ul { padding-left: 15px; }
 .pes-body li { margin-bottom: 5px; color: var(--off-black); }
 
+/* ── At-Risk Expansion ────────────────────────────────── */
+.risk-row {
+  display: flex; align-items: center; gap: 14px;
+  padding: 11px 22px; border-bottom: 1px solid var(--near-white);
+  cursor: pointer; transition: background 0.1s;
+}
+.risk-row:last-child { border-bottom: none; }
+.risk-row:hover { background: var(--near-white); }
+.risk-avatar {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: var(--coral); color: var(--white);
+  font-size: 10px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; font-family: 'DM Mono', monospace;
+}
+.risk-info { flex: 1; min-width: 0; }
+.risk-name { font-size: 12px; font-weight: 600; color: var(--black); }
+.risk-meta { font-size: 9px; color: var(--mid-gray); font-family: 'DM Mono', monospace; margin-top: 2px; }
+.risk-score-col { font-size: 20px; font-weight: 700; flex-shrink: 0; width: 38px; text-align: right; }
+.risk-gap { font-size: 11px; color: var(--dark-gray); flex: 1.8; line-height: 1.4; text-align: right; padding-left: 12px; }
+/* Logo in KPI circle */
+.kpi-logo-img { width: 22px; height: 22px; object-fit: contain; display: block; }
 /* ── Utility ──────────────────────────────────────────── */
 .hidden { display: none !important; }
 .mt8 { margin-top: 8px; }
@@ -612,14 +635,15 @@ a { text-decoration: none; color: inherit; }
         </div>
       </div>
 
-      <!-- At-Risk -->
-      <div class="kpi-card" id="kpi-risk">
+      <!-- At-Risk (expandable) -->
+      <div class="kpi-card" id="kpi-risk" onclick="toggleRiskExpansion()" style="cursor:pointer">
         <div class="kpi-lbl label-xs">At-Risk Coaches</div>
         <div class="kpi-body">
           <div class="kpi-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round">
-              <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
-              <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+              <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
+              <circle cx="9" cy="7" r="4"/>
+              <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/>
             </svg>
           </div>
           <div>
@@ -634,7 +658,8 @@ a { text-decoration: none; color: inherit; }
         <div class="kpi-lbl label-xs">Active Coaches</div>
         <div class="kpi-body">
           <div class="kpi-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round">
+            <img src="logo.png" class="kpi-logo-img" alt="Club Logo" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" style="display:none;width:18px;height:18px;stroke:var(--dark-gray)">
               <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
               <circle cx="9" cy="7" r="4"/>
               <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/>
@@ -673,6 +698,15 @@ a { text-decoration: none; color: inherit; }
         <button class="exp-close label-xs" onclick="toggleExpansion()">✕ &nbsp;Close</button>
       </div>
       <div class="exp-body" id="exp-body"><!-- JS --></div>
+    </div>
+
+    <!-- At-Risk Coaches Expansion -->
+    <div class="expansion" id="risk-expansion">
+      <div class="exp-header">
+        <span class="label-sm">At-Risk Coaches — <span id="risk-exp-total">0</span> Flagged</span>
+        <button class="exp-close label-xs" onclick="toggleRiskExpansion()">✕ &nbsp;Close</button>
+      </div>
+      <div id="risk-exp-body"><!-- JS --></div>
     </div>
 
     <!-- Main cols -->
@@ -1379,6 +1413,38 @@ function toggleExpansion() {
   const kpi = document.getElementById('kpi-coaches');
   el.classList.toggle('open');
   kpi.classList.toggle('kpi-selected', el.classList.contains('open'));
+}
+
+function toggleRiskExpansion() {
+  const el  = document.getElementById('risk-expansion');
+  const kpi = document.getElementById('kpi-risk');
+  el.classList.toggle('open');
+  kpi.classList.toggle('kpi-selected', el.classList.contains('open'));
+  if (el.classList.contains('open')) renderRiskExpansion();
+}
+
+function renderRiskExpansion() {
+  const atRisk = window.REAL_COACHES.filter(c => c.isAtRisk);
+  document.getElementById('risk-exp-total').textContent = atRisk.length;
+  document.getElementById('risk-exp-body').innerHTML = atRisk.length === 0
+    ? '<div style="padding:18px 22px;font-size:12px;color:var(--mid-gray)">No at-risk coaches flagged this period.</div>'
+    : atRisk.map(c => {
+        const m   = getPeriodMetrics(c, 'may03');
+        const s   = overallScore(m);
+        const col = ringStroke(s.overall);
+        const d   = diagnose(m, s);
+        const ini = c.name.split(' ').map(n => n[0]).join('');
+        return `
+          <div class="risk-row" onclick="openCoach(${c.id})">
+            <div class="risk-avatar">${ini}</div>
+            <div class="risk-info">
+              <div class="risk-name">${c.name}</div>
+              <div class="risk-meta">${c.level} · ${c.club}${c.isRamping ? ' · ' + c.rampStage : ''}</div>
+            </div>
+            <div class="risk-score-col" style="color:${col}">${s.overall}</div>
+            <div class="risk-gap">${d.opps[0] || '—'}</div>
+          </div>`;
+      }).join('');
 }
 
 /* ══════════════════════════════════════════════════════════
