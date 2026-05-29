@@ -1,0 +1,1464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Coach Curriculum Dashboard</title>
+<style>
+/* ── Reset & Base ───────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #f7f8fa;
+  --white: #ffffff;
+  --border: #e8eaed;
+  --text-primary: #0d1117;
+  --text-secondary: #6b7280;
+  --text-muted: #9ca3af;
+  --green: #16a34a;
+  --green-light: #dcfce7;
+  --amber: #d97706;
+  --amber-light: #fef3c7;
+  --red: #dc2626;
+  --red-light: #fee2e2;
+  --blue: #2563eb;
+  --blue-light: #dbeafe;
+  --navy: #0d1f3c;
+  --navy-mid: #1e3a5f;
+  --score-ring-size: 80px;
+  --radius: 12px;
+  --shadow: 0 1px 4px rgba(0,0,0,0.06), 0 2px 12px rgba(0,0,0,0.04);
+  --shadow-hover: 0 4px 20px rgba(0,0,0,0.10);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, sans-serif;
+}
+html, body { height: 100%; background: var(--bg); color: var(--text-primary); }
+a { text-decoration: none; color: inherit; }
+button { cursor: pointer; border: none; background: none; font: inherit; }
+
+/* ── Layout ─────────────────────────────────────────────────── */
+.view { display: none; min-height: 100vh; }
+.view.active { display: block; }
+.container { max-width: 1360px; margin: 0 auto; padding: 0 32px; }
+
+/* ── Top Bar ────────────────────────────────────────────────── */
+.topbar {
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  padding: 20px 32px;
+  position: sticky; top: 0; z-index: 100;
+}
+.topbar-inner { max-width: 1360px; margin: 0 auto; display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; }
+.topbar-title h1 { font-size: 26px; font-weight: 700; letter-spacing: -0.5px; color: var(--text-primary); }
+.topbar-title .meta { font-size: 13px; color: var(--text-secondary); margin-top: 4px; display: flex; gap: 8px; align-items: center; }
+.meta-sep { color: var(--border); }
+.topbar-right { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-muted); flex-shrink: 0; margin-top: 4px; }
+.topbar-right span { font-style: italic; }
+.info-icon { width: 16px; height: 16px; border-radius: 50%; border: 1.5px solid var(--text-muted); display: inline-flex; align-items: center; justify-content: center; font-size: 10px; font-style: normal; color: var(--text-muted); }
+
+/* ── Section Headers ────────────────────────────────────────── */
+.section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.section-title { font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-primary); }
+.section-label { font-size: 13px; color: var(--text-secondary); }
+
+/* ── KPI Cards ──────────────────────────────────────────────── */
+.kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin: 24px 0; }
+.kpi-card {
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 22px;
+  cursor: pointer;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  position: relative;
+}
+.kpi-card:hover { box-shadow: var(--shadow-hover); border-color: #c5c9d0; }
+.kpi-card.selected { border-color: var(--navy); box-shadow: 0 0 0 2px rgba(13,31,60,0.10); }
+.kpi-card .kpi-label { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-secondary); margin-bottom: 12px; }
+.kpi-card .kpi-body { display: flex; align-items: center; gap: 14px; }
+.kpi-icon { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.kpi-icon svg { width: 20px; height: 20px; }
+.kpi-number { font-size: 32px; font-weight: 700; line-height: 1; letter-spacing: -1px; }
+.kpi-sub { font-size: 12px; color: var(--text-secondary); margin-top: 4px; }
+.kpi-status { font-size: 14px; font-weight: 600; }
+
+/* Score ring (small) */
+.ring-sm { position: relative; width: 56px; height: 56px; flex-shrink: 0; }
+.ring-sm svg { width: 56px; height: 56px; transform: rotate(-90deg); }
+.ring-sm .ring-val { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 700; }
+
+/* ── Active Coaches Expansion Panel ─────────────────────────── */
+.expansion-panel {
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  margin-bottom: 24px;
+  overflow: hidden;
+  display: none;
+}
+.expansion-panel.open { display: block; }
+.expansion-header { padding: 16px 22px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); }
+.expansion-header .panel-title { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; }
+.close-btn { font-size: 12px; color: var(--text-secondary); display: flex; align-items: center; gap: 4px; }
+.expansion-body { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; }
+.level-card { padding: 24px 22px; }
+.level-card:not(:last-child) { border-right: 1px solid var(--border); }
+.level-name { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-secondary); margin-bottom: 8px; }
+.level-count { font-size: 36px; font-weight: 700; letter-spacing: -1.5px; margin-bottom: 12px; }
+.level-bar { height: 6px; background: var(--border); border-radius: 3px; margin-bottom: 8px; }
+.level-bar-fill { height: 100%; border-radius: 3px; background: var(--navy); }
+.level-pct { font-size: 13px; color: var(--text-secondary); }
+.level-of { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+
+/* ── Main 2-column grid ─────────────────────────────────────── */
+.main-grid { display: grid; grid-template-columns: 1fr 340px; gap: 24px; align-items: start; padding-bottom: 48px; }
+.main-left { display: flex; flex-direction: column; gap: 0; }
+.main-right { display: flex; flex-direction: column; gap: 0; }
+
+/* ── Coach Performance Panel ────────────────────────────────── */
+.perf-panel { background: var(--white); border: 1.5px solid var(--border); border-radius: var(--radius); padding: 22px; }
+.perf-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+.search-box {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--bg); border: 1.5px solid var(--border);
+  border-radius: 8px; padding: 8px 12px; width: 220px;
+}
+.search-box input { border: none; background: none; font-size: 13px; color: var(--text-primary); outline: none; width: 100%; }
+.search-box input::placeholder { color: var(--text-muted); }
+.search-icon { color: var(--text-muted); flex-shrink: 0; }
+
+/* Performance band */
+.perf-band { margin-bottom: 24px; }
+.perf-band:last-child { margin-bottom: 0; }
+.band-header { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+.band-label { font-size: 13px; font-weight: 700; }
+.band-count { font-size: 12px; color: var(--text-secondary); }
+.band-label.top { color: var(--green); }
+.band-label.building { color: var(--amber); }
+.band-label.needs { color: var(--red); }
+
+/* Coach cards in roster */
+.coach-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 12px; }
+.coach-card {
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  padding: 14px;
+  cursor: pointer;
+  transition: box-shadow 0.15s, border-color 0.15s;
+  position: relative;
+}
+.coach-card:hover { box-shadow: var(--shadow-hover); border-color: #c5c9d0; }
+.coach-card .cc-status-bar { width: 3px; position: absolute; left: 0; top: 12px; bottom: 12px; border-radius: 0 2px 2px 0; }
+.cc-status-bar.top { background: var(--green); }
+.cc-status-bar.building { background: var(--amber); }
+.cc-status-bar.needs { background: var(--red); }
+.coach-card .cc-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 12px; }
+.cc-info .cc-name { font-size: 13px; font-weight: 600; line-height: 1.2; }
+.cc-info .cc-level { font-size: 11px; color: var(--text-secondary); margin-top: 2px; }
+.cc-ring { /* small ring for coach card */ }
+.cc-stats { display: flex; gap: 16px; }
+.cc-stat .stat-label { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+.cc-stat .stat-val { font-size: 14px; font-weight: 600; }
+
+.show-all-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 13px; color: var(--text-secondary);
+  border: 1.5px solid var(--border); border-radius: 8px;
+  padding: 8px 14px; transition: background 0.15s;
+  margin-top: 4px;
+}
+.show-all-btn:hover { background: var(--bg); }
+.show-all-btn svg { width: 14px; height: 14px; }
+
+/* ── Ramp Pyramid Panel ──────────────────────────────────────── */
+.ramp-panel { background: var(--white); border: 1.5px solid var(--border); border-radius: var(--radius); padding: 22px; }
+.ramp-sub { font-size: 12px; color: var(--text-secondary); margin-bottom: 16px; }
+.ramp-count-line { font-size: 12px; color: var(--text-secondary); margin-bottom: 16px; display: flex; align-items: center; gap: 6px; }
+.ramp-arrow { font-size: 16px; }
+
+/* Pyramid */
+.pyramid { display: flex; flex-direction: column; align-items: center; gap: 3px; margin-bottom: 20px; }
+.pyramid-row {
+  display: flex; align-items: center; justify-content: space-between;
+  width: 100%; cursor: pointer; transition: opacity 0.15s;
+}
+.pyramid-row:hover .pyramid-bar { filter: brightness(0.92); }
+.pyramid-row.selected .pyramid-bar { outline: 2px solid var(--navy); outline-offset: 1px; }
+.pyramid-bar {
+  border-radius: 4px;
+  height: 32px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 600; color: var(--white);
+  transition: filter 0.15s;
+  flex-shrink: 0;
+}
+.pyramid-row-count { font-size: 12px; color: var(--text-secondary); width: 20px; text-align: right; flex-shrink: 0; }
+
+/* Ramp stage coach list */
+.ramp-stage-detail { border-top: 1px solid var(--border); padding-top: 16px; margin-top: 4px; }
+.ramp-stage-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-secondary); margin-bottom: 12px; }
+.ramp-coach-item {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 0; border-bottom: 1px solid var(--border); cursor: pointer;
+}
+.ramp-coach-item:last-child { border-bottom: none; }
+.ramp-coach-avatar { width: 30px; height: 30px; border-radius: 50%; background: var(--navy); color: var(--white); font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; margin-right: 10px; flex-shrink: 0; }
+.ramp-coach-info { flex: 1; }
+.ramp-coach-name { font-size: 13px; font-weight: 600; }
+.ramp-coach-level { font-size: 11px; color: var(--text-secondary); }
+.ramp-coach-score { font-size: 15px; font-weight: 700; }
+.view-all-link { font-size: 12px; color: var(--blue); display: flex; align-items: center; gap: 4px; margin-top: 14px; cursor: pointer; }
+
+/* ── STATUS BADGES ───────────────────────────────────────────── */
+.badge { display: inline-flex; align-items: center; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+.badge.top { background: var(--green-light); color: var(--green); }
+.badge.building { background: var(--amber-light); color: var(--amber); }
+.badge.needs { background: var(--red-light); color: var(--red); }
+
+/* ── COACH DETAIL VIEW ───────────────────────────────────────── */
+#view-detail .topbar-title h1 { font-size: 22px; }
+#view-detail .topbar-title .meta { font-size: 12px; gap: 12px; }
+.back-btn { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--text-secondary); margin: 20px 0 0; cursor: pointer; transition: color 0.15s; }
+.back-btn:hover { color: var(--text-primary); }
+
+/* Pay period toggle */
+.pp-toggle { display: flex; gap: 6px; flex-wrap: wrap; margin: 0 0 24px; }
+.pp-btn {
+  padding: 7px 14px; border-radius: 20px; font-size: 12px; font-weight: 500;
+  border: 1.5px solid var(--border); color: var(--text-secondary); background: var(--white);
+  cursor: pointer; transition: all 0.15s;
+}
+.pp-btn:hover { border-color: var(--navy); color: var(--navy); }
+.pp-btn.active { background: var(--navy); color: var(--white); border-color: var(--navy); }
+
+/* Score + pillars grid */
+.score-pillar-grid { display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+
+/* Development score card */
+.dev-score-card { background: var(--white); border: 1.5px solid var(--border); border-radius: var(--radius); padding: 24px; }
+.dev-score-card .dsc-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-secondary); margin-bottom: 16px; }
+.dsc-body { display: flex; align-items: center; gap: 20px; }
+.ring-lg { position: relative; width: 90px; height: 90px; flex-shrink: 0; }
+.ring-lg svg { width: 90px; height: 90px; transform: rotate(-90deg); }
+.ring-lg .ring-val { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 26px; font-weight: 800; letter-spacing: -1px; }
+.dsc-right .dsc-status { font-size: 18px; font-weight: 700; margin-bottom: 6px; }
+.dsc-right .dsc-diagnosis { font-size: 12px; color: var(--text-secondary); line-height: 1.5; margin-bottom: 14px; }
+.weighted-scores { display: flex; gap: 14px; flex-wrap: wrap; }
+.ws-item { display: flex; flex-direction: column; align-items: flex-start; }
+.ws-dot { width: 8px; height: 8px; border-radius: 50%; margin-bottom: 4px; }
+.ws-label { font-size: 10px; color: var(--text-secondary); }
+.ws-pct { font-size: 12px; font-weight: 600; }
+
+/* Pillar cards */
+.pillar-card { background: var(--white); border: 1.5px solid var(--border); border-radius: var(--radius); padding: 20px; }
+.pillar-card .pc-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-secondary); margin-bottom: 12px; }
+.pc-ring-row { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+.pc-score-num { font-size: 28px; font-weight: 700; letter-spacing: -1px; }
+.pc-ring { position: relative; width: 50px; height: 50px; flex-shrink: 0; }
+.pc-ring svg { width: 50px; height: 50px; transform: rotate(-90deg); }
+.pc-ring .ring-val { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; }
+.pc-kpis { display: flex; flex-direction: column; gap: 8px; }
+.pc-kpi-row { display: flex; align-items: center; justify-content: space-between; font-size: 12px; }
+.pc-kpi-name { color: var(--text-secondary); display: flex; align-items: center; gap: 6px; }
+.pc-kpi-val { font-weight: 600; color: var(--text-primary); }
+.pc-view-link { font-size: 12px; color: var(--blue); margin-top: 12px; display: inline-flex; align-items: center; gap: 4px; cursor: pointer; }
+
+/* Progress pyramid + compensation row */
+.middle-grid { display: grid; grid-template-columns: 1fr 1.1fr 1fr; gap: 16px; margin-bottom: 20px; }
+
+/* Progress pyramid (detail) */
+.pyramid-detail-card { background: var(--white); border: 1.5px solid var(--border); border-radius: var(--radius); padding: 22px; }
+.pdc-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-secondary); margin-bottom: 16px; }
+.pyramid-detail-body { display: flex; gap: 20px; align-items: center; }
+.pdc-pyramid { display: flex; flex-direction: column; align-items: center; gap: 4px; flex-shrink: 0; }
+.pdc-layer {
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 4px; font-size: 11px; font-weight: 700;
+  color: var(--white); text-align: center; line-height: 1.2;
+}
+.pdc-metrics { display: flex; flex-direction: column; gap: 10px; flex: 1; }
+.pdc-metric { display: flex; flex-direction: column; }
+.pdc-metric-label { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+.pdc-metric-val { font-size: 16px; font-weight: 700; }
+.pdc-metric-sub { font-size: 10px; color: var(--text-secondary); }
+
+/* Compensation card */
+.comp-card { background: var(--white); border: 1.5px solid var(--border); border-radius: var(--radius); padding: 22px; }
+.comp-card .cc-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-secondary); margin-bottom: 16px; }
+.comp-top-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+.comp-cell { display: flex; flex-direction: column; }
+.comp-cell-label { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px; }
+.comp-cell-val { font-size: 18px; font-weight: 700; }
+.comp-payout { background: var(--navy); color: var(--white); border-radius: 8px; padding: 12px 16px; }
+.comp-payout .comp-cell-label { color: rgba(255,255,255,0.6); }
+.comp-payout .comp-cell-val { font-size: 22px; }
+.comp-breakdown { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border); }
+.comp-line-label { font-size: 11px; color: var(--text-muted); }
+.comp-line-calc { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+.comp-line-val { font-size: 13px; font-weight: 600; margin-top: 2px; }
+
+/* Pay period progress card */
+.pp-progress-card { background: var(--white); border: 1.5px solid var(--border); border-radius: var(--radius); padding: 22px; }
+.pp-progress-card .ppp-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-secondary); margin-bottom: 14px; }
+.ppp-unlock { font-size: 13px; font-weight: 600; color: var(--text-primary); margin-bottom: 10px; }
+.ppp-unlock span { color: var(--amber); }
+.progress-bar-wrap { background: var(--border); border-radius: 4px; height: 8px; margin-bottom: 8px; }
+.progress-bar-fill { height: 100%; border-radius: 4px; background: var(--navy); transition: width 0.4s; }
+.ppp-fraction { font-size: 12px; color: var(--text-secondary); margin-bottom: 20px; }
+.rate-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; }
+.rate-cell {
+  border-radius: 6px; padding: 6px 4px; text-align: center;
+  background: var(--bg); border: 1.5px solid var(--border);
+}
+.rate-cell.current-tier { background: var(--navy); border-color: var(--navy); }
+.rate-cell .rc-sessions { font-size: 10px; color: var(--text-muted); }
+.rate-cell.current-tier .rc-sessions { color: rgba(255,255,255,0.6); }
+.rate-cell .rc-rate { font-size: 12px; font-weight: 700; color: var(--text-primary); margin-top: 3px; }
+.rate-cell.current-tier .rc-rate { color: var(--white); }
+
+/* KPI strip */
+.kpi-strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 20px; }
+.kpi-strip-card { background: var(--white); border: 1.5px solid var(--border); border-radius: var(--radius); padding: 20px 22px; display: flex; align-items: center; justify-content: space-between; }
+.ksi-left .ksi-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-secondary); margin-bottom: 6px; }
+.ksi-left .ksi-val { font-size: 26px; font-weight: 700; letter-spacing: -1px; }
+.ksi-left .ksi-sub { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+.ksi-icon { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+.ksi-icon svg { width: 20px; height: 20px; }
+.ksi-icon.green { background: var(--green-light); color: var(--green); }
+.ksi-icon.blue { background: var(--blue-light); color: var(--blue); }
+.ksi-icon.amber { background: var(--amber-light); color: var(--amber); }
+
+/* Progress Elevation Steps */
+.pes-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 40px; }
+.pes-card { background: var(--white); border: 1.5px solid var(--border); border-radius: var(--radius); padding: 22px; }
+.pes-card .pes-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-bottom: 12px; }
+.pes-card .pes-icon svg { width: 18px; height: 18px; }
+.pes-icon.wins { background: var(--green-light); color: var(--green); }
+.pes-icon.opps { background: var(--amber-light); color: var(--amber); }
+.pes-icon.next { background: var(--blue-light); color: var(--blue); }
+.pes-card .pes-head { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; }
+.pes-head.wins { color: var(--green); }
+.pes-head.opps { color: var(--amber); }
+.pes-head.next { color: var(--blue); }
+.pes-card .pes-body { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+.pes-body ul { padding-left: 16px; }
+.pes-body li { margin-bottom: 4px; }
+
+/* ── Utility ─────────────────────────────────────────────────── */
+.hidden { display: none !important; }
+.color-top { color: var(--green); }
+.color-building { color: var(--amber); }
+.color-needs { color: var(--red); }
+.color-navy { color: var(--navy); }
+.mt8 { margin-top: 8px; }
+.section-pad { padding: 24px 0; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════
+     VIEW 1 — CLUB OVERVIEW
+═══════════════════════════════════════════════════════════════ -->
+<div id="view-overview" class="view active">
+
+  <!-- Top Bar -->
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div class="topbar-title">
+        <h1 id="ov-title">SoHo Club Coach Overview</h1>
+        <div class="meta">
+          <span id="ov-coach-count">30 active coaches</span>
+          <span class="meta-sep">•</span>
+          <span id="ov-club-count">1 club</span>
+          <span class="meta-sep">•</span>
+          <span>Pay Period: <strong id="ov-pay-period">May 03, 2026</strong></span>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <span>Data Sources: <em>Weekly Self-Report + Salesforce</em></span>
+        <span class="info-icon">i</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+
+    <!-- KPI Cards -->
+    <div class="kpi-grid">
+
+      <!-- Club Health Score -->
+      <div class="kpi-card" id="kpi-health">
+        <div class="kpi-label">Club Health Score</div>
+        <div class="kpi-body">
+          <div class="ring-sm">
+            <svg viewBox="0 0 56 56" fill="none">
+              <circle cx="28" cy="28" r="22" stroke="#e8eaed" stroke-width="5"/>
+              <circle id="health-ring" cx="28" cy="28" r="22" stroke="#d97706" stroke-width="5"
+                stroke-dasharray="138.2" stroke-dashoffset="48" stroke-linecap="round"/>
+            </svg>
+            <div class="ring-val" id="kpi-health-score">72</div>
+          </div>
+          <div>
+            <div class="kpi-status color-building" id="kpi-health-status">Building</div>
+            <div class="kpi-sub" id="kpi-health-msg" style="max-width:160px">Keep building momentum to reach Great.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- At-Risk Coaches -->
+      <div class="kpi-card" id="kpi-risk">
+        <div class="kpi-label">At-Risk Coaches</div>
+        <div class="kpi-body">
+          <div class="kpi-icon" style="background:#fee2e2">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2" stroke-linecap="round">
+              <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+              <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+            </svg>
+          </div>
+          <div>
+            <div class="kpi-number" id="kpi-risk-count">7</div>
+            <div class="kpi-sub" id="kpi-risk-sub">3 on watch</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Active Coaches (clickable) -->
+      <div class="kpi-card selected" id="kpi-coaches" onclick="toggleCoachPanel()">
+        <div class="kpi-label">Active Coaches</div>
+        <div class="kpi-body">
+          <div class="kpi-icon" style="background:#e0e7ff">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#4338ca" stroke-width="2" stroke-linecap="round">
+              <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
+              <circle cx="9" cy="7" r="4"/>
+              <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/>
+            </svg>
+          </div>
+          <div>
+            <div class="kpi-number" id="kpi-coaches-count">30</div>
+            <div class="kpi-sub">Coach • Coach+ • Coach X</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recurring Clients -->
+      <div class="kpi-card" id="kpi-recurring">
+        <div class="kpi-label">Recurring Clients</div>
+        <div class="kpi-body">
+          <div class="kpi-icon" style="background:#dcfce7">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2" stroke-linecap="round">
+              <polyline points="23 4 23 10 17 10"/>
+              <path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/>
+            </svg>
+          </div>
+          <div>
+            <div class="kpi-number" id="kpi-recurring-count">214</div>
+            <div class="kpi-sub" id="kpi-recurring-sub">81% of active</div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /kpi-grid -->
+
+    <!-- Active Coaches Expansion Panel -->
+    <div class="expansion-panel open" id="coach-level-panel">
+      <div class="expansion-header">
+        <span class="panel-title">Active Coaches — <span id="panel-total">30</span> Total</span>
+        <button class="close-btn" onclick="toggleCoachPanel()">✕ Close</button>
+      </div>
+      <div class="expansion-body" id="level-breakdown">
+        <!-- filled by JS -->
+      </div>
+    </div>
+
+    <!-- Main 2-col grid -->
+    <div class="main-grid">
+
+      <!-- Left: Coach Performance -->
+      <div class="main-left">
+        <div class="perf-panel">
+          <div class="perf-top">
+            <div class="section-title">Coach Performance</div>
+            <div class="search-box">
+              <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input type="text" id="coach-search" placeholder="Search coaches..." oninput="filterCoaches()">
+            </div>
+          </div>
+          <div id="coach-performance-bands">
+            <!-- filled by JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Ramp Stage Distribution -->
+      <div class="main-right">
+        <div class="ramp-panel">
+          <div class="section-header">
+            <div class="section-title">Ramp Stage Distribution</div>
+            <span class="badge building">Ramping coaches only</span>
+          </div>
+          <div class="ramp-sub">First 90 days begin after onboarding</div>
+          <div class="ramp-count-line">
+            <span id="ramp-total-count">12 ramping coaches</span>
+            <span class="ramp-arrow">→</span>
+          </div>
+          <div class="pyramid" id="ramp-pyramid">
+            <!-- filled by JS -->
+          </div>
+          <div class="ramp-stage-detail hidden" id="ramp-stage-detail">
+            <div class="ramp-stage-label" id="ramp-stage-title"></div>
+            <div id="ramp-stage-coaches"></div>
+            <div class="view-all-link" id="ramp-view-all"></div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /main-grid -->
+  </div><!-- /container -->
+</div><!-- /view-overview -->
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     VIEW 2 — COACH DETAIL
+═══════════════════════════════════════════════════════════════ -->
+<div id="view-detail" class="view">
+
+  <!-- Top Bar -->
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div class="topbar-title">
+        <h1>Coach Curriculum Dashboard</h1>
+        <div class="meta">
+          <span>Coach: <strong id="det-name">—</strong></span>
+          <span class="meta-sep">|</span>
+          <span>Club: <strong id="det-club">SoHo</strong></span>
+          <span class="meta-sep">|</span>
+          <span>Ramp Stage: <strong id="det-ramp">—</strong></span>
+          <span class="meta-sep">|</span>
+          <span>Pay Period: <strong id="det-pp">May 03</strong></span>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <span>Data Sources: <em>Weekly Self-Report + Salesforce</em></span>
+        <span class="info-icon">i</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <button class="back-btn" onclick="showOverview()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+      Back to Club Overview
+    </button>
+
+    <!-- Pay Period Toggle -->
+    <div class="pp-toggle mt8" id="pp-toggle">
+      <!-- filled by JS -->
+    </div>
+
+    <!-- Score + Pillar Cards -->
+    <div class="score-pillar-grid">
+      <!-- Dev Score Card -->
+      <div class="dev-score-card">
+        <div class="dsc-label">Coach Development Score</div>
+        <div class="dsc-body">
+          <div class="ring-lg">
+            <svg viewBox="0 0 90 90" fill="none">
+              <circle cx="45" cy="45" r="36" stroke="#e8eaed" stroke-width="7"/>
+              <circle id="dev-ring" cx="45" cy="45" r="36" stroke="#d97706" stroke-width="7"
+                stroke-dasharray="226.2" stroke-dashoffset="90" stroke-linecap="round"/>
+            </svg>
+            <div class="ring-val" id="dev-score-num">—</div>
+          </div>
+          <div class="dsc-right">
+            <div class="dsc-status" id="dev-status">—</div>
+            <div class="dsc-diagnosis" id="dev-diagnosis">—</div>
+            <div class="weighted-scores">
+              <div class="ws-item">
+                <div class="ws-dot" style="background:#d97706"></div>
+                <div class="ws-label">Performance</div>
+                <div class="ws-pct">50%</div>
+              </div>
+              <div class="ws-item">
+                <div class="ws-dot" style="background:#2563eb"></div>
+                <div class="ws-label">Programming</div>
+                <div class="ws-pct">30%</div>
+              </div>
+              <div class="ws-item">
+                <div class="ws-dot" style="background:#16a34a"></div>
+                <div class="ws-label">Professionalism</div>
+                <div class="ws-pct">20%</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Professionalism Pillar -->
+      <div class="pillar-card">
+        <div class="pc-label">Professionalism</div>
+        <div class="pc-ring-row">
+          <div class="pc-ring">
+            <svg viewBox="0 0 50 50" fill="none">
+              <circle cx="25" cy="25" r="20" stroke="#e8eaed" stroke-width="4.5"/>
+              <circle id="prof-ring" cx="25" cy="25" r="20" stroke="#dc2626" stroke-width="4.5"
+                stroke-dasharray="125.7" stroke-dashoffset="67" stroke-linecap="round"/>
+            </svg>
+            <div class="ring-val" id="prof-score">—</div>
+          </div>
+          <div>
+            <div class="badge needs" id="prof-badge">—</div>
+          </div>
+        </div>
+        <div class="pc-kpis" id="prof-kpis"></div>
+        <div class="pc-view-link">View details →</div>
+      </div>
+
+      <!-- Programming Pillar -->
+      <div class="pillar-card">
+        <div class="pc-label">Programming</div>
+        <div class="pc-ring-row">
+          <div class="pc-ring">
+            <svg viewBox="0 0 50 50" fill="none">
+              <circle cx="25" cy="25" r="20" stroke="#e8eaed" stroke-width="4.5"/>
+              <circle id="prog-ring" cx="25" cy="25" r="20" stroke="#16a34a" stroke-width="4.5"
+                stroke-dasharray="125.7" stroke-dashoffset="38" stroke-linecap="round"/>
+            </svg>
+            <div class="ring-val" id="prog-score">—</div>
+          </div>
+          <div>
+            <div class="badge building" id="prog-badge">—</div>
+          </div>
+        </div>
+        <div class="pc-kpis" id="prog-kpis"></div>
+        <div class="pc-view-link">View details →</div>
+      </div>
+
+      <!-- Performance Pillar -->
+      <div class="pillar-card">
+        <div class="pc-label">Performance</div>
+        <div class="pc-ring-row">
+          <div class="pc-ring">
+            <svg viewBox="0 0 50 50" fill="none">
+              <circle cx="25" cy="25" r="20" stroke="#e8eaed" stroke-width="4.5"/>
+              <circle id="perf-ring" cx="25" cy="25" r="20" stroke="#d97706" stroke-width="4.5"
+                stroke-dasharray="125.7" stroke-dashoffset="58" stroke-linecap="round"/>
+            </svg>
+            <div class="ring-val" id="perf-score">—</div>
+          </div>
+          <div>
+            <div class="badge building" id="perf-badge">—</div>
+          </div>
+        </div>
+        <div class="pc-kpis" id="perf-kpis"></div>
+        <div class="pc-view-link">View details →</div>
+      </div>
+    </div><!-- /score-pillar-grid -->
+
+    <!-- Middle row: Pyramid | Compensation | Pay Period Progress -->
+    <div class="middle-grid">
+
+      <!-- Progress Pyramid -->
+      <div class="pyramid-detail-card">
+        <div class="pdc-label">Progress Pyramid</div>
+        <div class="pyramid-detail-body">
+          <div class="pdc-pyramid" id="pdc-pyramid">
+            <!-- filled by JS -->
+          </div>
+          <div class="pdc-metrics" id="pdc-metrics">
+            <!-- filled by JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Compensation -->
+      <div class="comp-card">
+        <div class="cc-label">Current Pay Period Compensation</div>
+        <div class="comp-top-row">
+          <div class="comp-cell">
+            <div class="comp-cell-label">Tier</div>
+            <div class="comp-cell-val" id="comp-tier">—</div>
+          </div>
+          <div class="comp-cell">
+            <div class="comp-cell-label">Session Rate</div>
+            <div class="comp-cell-val" id="comp-rate">—</div>
+          </div>
+          <div class="comp-cell comp-payout">
+            <div class="comp-cell-label">Est. Pay Period Payout</div>
+            <div class="comp-cell-val" id="comp-payout">—</div>
+          </div>
+        </div>
+        <div class="comp-breakdown" id="comp-breakdown">
+          <!-- filled by JS -->
+        </div>
+      </div>
+
+      <!-- Pay Period Progress -->
+      <div class="pp-progress-card">
+        <div class="ppp-label">Pay Period Progress</div>
+        <div class="ppp-unlock" id="ppp-unlock-msg">—</div>
+        <div class="progress-bar-wrap">
+          <div class="progress-bar-fill" id="ppp-bar" style="width:0%"></div>
+        </div>
+        <div class="ppp-fraction" id="ppp-fraction">—</div>
+        <div class="section-label" style="font-size:11px;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;color:var(--text-muted)">Session Rate Progression</div>
+        <div class="rate-grid" id="rate-grid">
+          <!-- filled by JS -->
+        </div>
+      </div>
+
+    </div><!-- /middle-grid -->
+
+    <!-- KPI Strip -->
+    <div class="kpi-strip">
+      <div class="kpi-strip-card">
+        <div class="ksi-left">
+          <div class="ksi-label">Active Clients</div>
+          <div class="ksi-val" id="strip-active">—</div>
+        </div>
+        <div class="ksi-icon blue">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+        </div>
+      </div>
+      <div class="kpi-strip-card">
+        <div class="ksi-left">
+          <div class="ksi-label">Recurring</div>
+          <div class="ksi-val" id="strip-recurring">—</div>
+          <div class="ksi-sub" id="strip-recurring-pct">—</div>
+        </div>
+        <div class="ksi-icon green">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>
+        </div>
+      </div>
+      <div class="kpi-strip-card">
+        <div class="ksi-left">
+          <div class="ksi-label">Avg Program</div>
+          <div class="ksi-val" id="strip-avg-prog">—</div>
+          <div class="ksi-sub">/ week</div>
+        </div>
+        <div class="ksi-icon amber">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        </div>
+      </div>
+    </div><!-- /kpi-strip -->
+
+    <!-- Progress Elevation Steps -->
+    <div class="section-title" style="margin-bottom:16px">Progress Elevation Steps</div>
+    <div class="pes-grid">
+      <div class="pes-card">
+        <div class="pes-icon wins">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="8 6 2 12 8 18"/><path d="M2 12h20M16 6l6 6-6 6"/></svg>
+        </div>
+        <div class="pes-head wins">Wins</div>
+        <div class="pes-body" id="pes-wins">—</div>
+      </div>
+      <div class="pes-card">
+        <div class="pes-icon opps">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        </div>
+        <div class="pes-head opps">Opportunities</div>
+        <div class="pes-body" id="pes-opps">—</div>
+      </div>
+      <div class="pes-card">
+        <div class="pes-icon next">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+        </div>
+        <div class="pes-head next">Next Steps</div>
+        <div class="pes-body" id="pes-next">—</div>
+      </div>
+    </div>
+
+  </div><!-- /container -->
+</div><!-- /view-detail -->
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     DATA + ENGINE
+═══════════════════════════════════════════════════════════════ -->
+<script src="real_coaches.js"></script>
+<script src="portfolio_stats.js"></script>
+<script>
+/* ──────────────────────────────────────────────────────────────
+   FALLBACKS — if data files failed to load
+────────────────────────────────────────────────────────────── */
+if (typeof window.REAL_COACHES === 'undefined') window.REAL_COACHES = [];
+if (typeof window.PORTFOLIO_STATS === 'undefined') window.PORTFOLIO_STATS = {
+  club: { name: 'SoHo', totalClubs: 1, payPeriod: 'May 03, 2026', payPeriodId: 'may03' },
+  activeCoaches: 0, atRiskCoaches: 0, atRiskOnWatch: 0,
+  recurringClients: 0, totalActiveClients: 0,
+  levelDistribution: {
+    coach:     { count: 0, label: 'PT – Coach',   pct: 0 },
+    coachPlus: { count: 0, label: 'PT – Coach+',  pct: 0 },
+    coachX:    { count: 0, label: 'PT – Coach X', pct: 0 }
+  },
+  rampingCoaches: 0,
+  rampDistribution: {},
+  clubHealthScore: 0, clubHealthStatus: 'N/A', clubHealthMessage: '',
+  recurringRate: 0
+};
+if (typeof window.PAY_PERIODS === 'undefined') window.PAY_PERIODS = [
+  { id: 'may03', label: 'May 03', startDate: '2026-05-03', isCurrent: true }
+];
+if (typeof window.SESSION_RATE_TIERS === 'undefined') window.SESSION_RATE_TIERS = [
+  { min:0, max:34, rate:40.50, label:'0–34' },
+  { min:35, max:39, rate:46.00, label:'35–39' },
+  { min:40, max:44, rate:61.50, label:'40–44' },
+  { min:45, max:54, rate:65.00, label:'45–54' },
+  { min:55, max:64, rate:69.00, label:'55–64' },
+  { min:65, max:Infinity, rate:72.50, label:'65+' }
+];
+if (typeof window.EQUIFIT_RATE === 'undefined') window.EQUIFIT_RATE = 25;
+if (typeof window.CPT_RATE === 'undefined') window.CPT_RATE = 30;
+
+/* ──────────────────────────────────────────────────────────────
+   SCORING ENGINE
+────────────────────────────────────────────────────────────── */
+const BENCHMARKS = {
+  activeClients: 15,
+  recurringRate: 0.75,
+  sessions: 40,
+  equifits: 5,
+  conversions: 6,
+  opportunities: 15,
+  leads: 7,
+  followUps: 5,
+  equifitsBooked: 4,
+  spu: 6.5,
+  sessionConfirmRate: 85,
+  cptsCompleted: 4
+};
+
+function scorePerformance(c) {
+  let pts = 0, max = 0;
+  const add = (val, bench, weight) => { pts += Math.min(1, val / bench) * weight; max += weight; };
+  add(c.activeClients, BENCHMARKS.activeClients, 25);
+  add(c.conversions, BENCHMARKS.conversions, 20);
+  add(c.recurringClients / Math.max(c.activeClients, 1), BENCHMARKS.recurringRate, 20);
+  add(c.sessionsCompleted, BENCHMARKS.sessions, 20);
+  add(c.opportunitiesCreated, BENCHMARKS.opportunities, 15);
+  return Math.round((pts / max) * 100);
+}
+
+function scoreProgramming(c) {
+  let pts = 0, max = 0;
+  const add = (val, bench, weight) => { pts += Math.min(1, val / bench) * weight; max += weight; };
+  add(c.cptsCompleted, BENCHMARKS.cptsCompleted, 30);
+  add(c.spu, BENCHMARKS.spu, 30);
+  add(c.sessionConfirmRate, BENCHMARKS.sessionConfirmRate, 25);
+  const ceScore = c.clientExperience === 'Excellent' ? 1 : c.clientExperience === 'Good' ? 0.75 : 0.4;
+  pts += ceScore * 15; max += 15;
+  return Math.round((pts / max) * 100);
+}
+
+function scoreProfessionalism(c) {
+  let pts = 0, max = 0;
+  const add = (val, bench, weight) => { pts += Math.min(1, val / bench) * weight; max += weight; };
+  add(c.equifitsCompleted, BENCHMARKS.equifits, 30);
+  add(c.leadsGenerated, BENCHMARKS.leads, 25);
+  add(c.equifitsBooked, BENCHMARKS.equifitsBooked, 25);
+  add(c.followUps, BENCHMARKS.followUps, 20);
+  return Math.round((pts / max) * 100);
+}
+
+function overallScore(c) {
+  const perf = scorePerformance(c);
+  const prog = scoreProgramming(c);
+  const prof = scoreProfessionalism(c);
+  return {
+    overall: Math.round(perf * 0.5 + prog * 0.3 + prof * 0.2),
+    performance: perf,
+    programming: prog,
+    professionalism: prof
+  };
+}
+
+function scoreStatus(score) {
+  if (score >= 75) return { label: 'Top Performer', band: 'top', color: 'var(--green)' };
+  if (score >= 50) return { label: 'Building', band: 'building', color: 'var(--amber)' };
+  return { label: 'Needs Attention', band: 'needs', color: 'var(--red)' };
+}
+
+function bandForScore(score) {
+  if (score >= 75) return 'top';
+  if (score >= 50) return 'building';
+  return 'needs';
+}
+
+/* ──────────────────────────────────────────────────────────────
+   DIAGNOSIS ENGINE
+────────────────────────────────────────────────────────────── */
+function diagnose(c, scores) {
+  const convRate = c.opportunitiesCreated > 0 ? c.conversions / c.opportunitiesCreated : 0;
+  const recurRate = c.activeClients > 0 ? c.recurringClients / c.activeClients : 0;
+  const activityVol = c.equifitsCompleted + c.cptsCompleted;
+  const lowActivity = activityVol < 6;
+  const lowConversion = convRate < 0.35;
+  const lowRetention = recurRate < 0.65;
+  const lowEquifits = c.equifitsCompleted < 4;
+  const lowRecurring = recurRate < 0.60;
+  const lowSessions = c.sessionsCompleted < 30;
+
+  // Wins
+  const wins = [];
+  if (recurRate >= 0.70) wins.push('Strong client retention and recurring scheduling habits.');
+  if (convRate >= 0.45) wins.push('High conversion rate — strong value communication.');
+  if (c.sessionsCompleted >= 40) wins.push('Consistent session volume this pay period.');
+  if (c.equifitsCompleted >= 5) wins.push('Strong Equifit output — solid floor engagement.');
+  if (scores.programming >= 70) wins.push('Session quality and programming delivery are strong.');
+  if (wins.length === 0) wins.push('Showing up consistently and building the foundation.');
+
+  // Opportunities
+  const opps = [];
+  if (lowActivity && lowConversion) opps.push('Pipeline is thin — low activity and low conversion.');
+  else if (lowActivity) opps.push('Low Equifit and CPT volume — pipeline needs attention.');
+  else if (lowConversion) opps.push('High activity but low conversion — closing skills need work.');
+  if (lowRetention) opps.push('Client retention below benchmark — follow-up systems need strengthening.');
+  if (lowEquifits) opps.push('Low Equifit booking volume — floor engagement and lead gen is the gap.');
+  if (lowSessions) opps.push('Session volume is below pace for pay period.');
+  if (opps.length === 0) opps.push('No major gaps this period — focus on maintaining momentum.');
+
+  // Next Steps
+  const next = [];
+  if (lowEquifits) next.push('Book 3 Equifits this week from floor conversations.');
+  if (lowConversion) next.push('Practice recommendation close in weekly PDM.');
+  if (c.leadsGenerated < 5) next.push('Generate 5 qualified leads through member touchpoints.');
+  if (lowRetention) next.push('Send a check-in message to all non-recurring clients.');
+  if (lowSessions) next.push('Review and confirm all client sessions for the week.');
+  if (c.followUps < 4) next.push('Complete follow-ups with every Equifit prospect this week.');
+  if (next.length === 0) next.push('Maintain current pace and focus on Equifit quality.');
+
+  // Short diagnosis sentence
+  let diagSentence = '';
+  if (scores.overall >= 75) {
+    diagSentence = 'Performing at a high level — focus on sustaining momentum.';
+  } else if (lowActivity && lowConversion) {
+    diagSentence = 'Pipeline is the priority — more Equifits and lead generation needed.';
+  } else if (!lowActivity && lowConversion) {
+    diagSentence = 'Strong activity but conversion is the gap — work the recommendation close.';
+  } else if (lowRetention && !lowActivity) {
+    diagSentence = 'Strong lead gen but clients are not recurring — follow-up systems needed.';
+  } else {
+    diagSentence = 'Strong client retention, but more lead generation and session volume are needed to move closer to RAMBO.';
+  }
+
+  return { wins, opps, next, diagSentence };
+}
+
+/* ──────────────────────────────────────────────────────────────
+   COMPENSATION ENGINE
+────────────────────────────────────────────────────────────── */
+function getSessionRate(sessions) {
+  const tiers = window.SESSION_RATE_TIERS;
+  for (let t of tiers) {
+    if (sessions >= t.min && sessions <= t.max) return t;
+  }
+  return tiers[tiers.length - 1];
+}
+
+function getNextTier(sessions) {
+  const tiers = window.SESSION_RATE_TIERS;
+  for (let i = 0; i < tiers.length - 1; i++) {
+    if (sessions >= tiers[i].min && sessions <= tiers[i].max) {
+      return tiers[i + 1];
+    }
+  }
+  return null;
+}
+
+function calcPayout(c) {
+  const tier = getSessionRate(c.sessionsCompleted);
+  const sessionEarnings = c.sessionsCompleted * tier.rate;
+  const equifitEarnings = c.equifitsCompleted * window.EQUIFIT_RATE;
+  const cptEarnings = c.cptsCompleted * window.CPT_RATE;
+  return {
+    tier,
+    sessionEarnings,
+    equifitEarnings,
+    cptEarnings,
+    total: Math.round(sessionEarnings + equifitEarnings + cptEarnings)
+  };
+}
+
+/* ──────────────────────────────────────────────────────────────
+   SVG RING HELPER
+────────────────────────────────────────────────────────────── */
+function ringColor(score) {
+  if (score >= 75) return 'var(--green)';
+  if (score >= 50) return 'var(--amber)';
+  return 'var(--red)';
+}
+
+function setRing(el, score, circumference) {
+  if (!el) return;
+  const offset = circumference - (score / 100) * circumference;
+  el.setAttribute('stroke-dashoffset', offset.toFixed(1));
+  el.setAttribute('stroke', ringColor(score));
+}
+
+/* ──────────────────────────────────────────────────────────────
+   VIEW OVERVIEW — render
+────────────────────────────────────────────────────────────── */
+function renderOverview() {
+  const ps = window.PORTFOLIO_STATS;
+  const coaches = window.REAL_COACHES;
+
+  // Top bar
+  document.getElementById('ov-title').textContent = ps.club.name + ' Club Coach Overview';
+  document.getElementById('ov-coach-count').textContent = ps.activeCoaches + ' active coaches';
+  document.getElementById('ov-club-count').textContent = ps.club.totalClubs + ' club';
+  document.getElementById('ov-pay-period').textContent = ps.club.payPeriod;
+
+  // KPI: health score
+  document.getElementById('kpi-health-score').textContent = ps.clubHealthScore;
+  document.getElementById('kpi-health-status').textContent = ps.clubHealthStatus;
+  document.getElementById('kpi-health-msg').textContent = ps.clubHealthMessage;
+  const healthCircumference = 2 * Math.PI * 22;
+  setRing(document.getElementById('health-ring'), ps.clubHealthScore, healthCircumference);
+
+  // KPI: at-risk
+  document.getElementById('kpi-risk-count').textContent = ps.atRiskCoaches;
+  document.getElementById('kpi-risk-sub').textContent = ps.atRiskOnWatch + ' on watch';
+
+  // KPI: coaches
+  document.getElementById('kpi-coaches-count').textContent = ps.activeCoaches;
+
+  // KPI: recurring
+  document.getElementById('kpi-recurring-count').textContent = ps.recurringClients;
+  document.getElementById('kpi-recurring-sub').textContent = ps.recurringRate + '% of active';
+
+  // Level breakdown panel
+  document.getElementById('panel-total').textContent = ps.activeCoaches;
+  const ld = ps.levelDistribution;
+  document.getElementById('level-breakdown').innerHTML = `
+    ${renderLevelCard(ld.coach)}
+    ${renderLevelCard(ld.coachPlus)}
+    ${renderLevelCard(ld.coachX)}
+  `;
+
+  // Coach performance bands
+  renderCoachBands(coaches);
+
+  // Ramp pyramid
+  renderRampPyramid();
+}
+
+function renderLevelCard(lvl) {
+  return `
+    <div class="level-card">
+      <div class="level-name">${lvl.label}</div>
+      <div class="level-count">${lvl.count}</div>
+      <div class="level-bar"><div class="level-bar-fill" style="width:${lvl.pct}%"></div></div>
+      <div class="level-pct">${lvl.pct}%</div>
+      <div class="level-of">of ${window.PORTFOLIO_STATS.activeCoaches} active coaches</div>
+    </div>`;
+}
+
+/* ──────────────────────────────────────────────────────────────
+   COACH PERFORMANCE BANDS
+────────────────────────────────────────────────────────────── */
+let allCoachesScored = [];
+let expandedBands = { top: false, building: false, needs: false };
+
+function renderCoachBands(coaches) {
+  allCoachesScored = coaches.map(c => {
+    const s = overallScore(c);
+    return { ...c, scores: s, band: bandForScore(s.overall) };
+  });
+  renderBandsUI(allCoachesScored);
+}
+
+function filterCoaches() {
+  const q = document.getElementById('coach-search').value.toLowerCase();
+  const filtered = q
+    ? allCoachesScored.filter(c => c.name.toLowerCase().includes(q) || c.level.toLowerCase().includes(q))
+    : allCoachesScored;
+  renderBandsUI(filtered);
+}
+
+function renderBandsUI(coaches) {
+  const bands = {
+    top: coaches.filter(c => c.band === 'top'),
+    building: coaches.filter(c => c.band === 'building'),
+    needs: coaches.filter(c => c.band === 'needs')
+  };
+
+  let html = '';
+  html += renderBand('top', 'TOP PERFORMERS', bands.top);
+  html += renderBand('building', 'BUILDING', bands.building);
+  html += renderBand('needs', 'NEEDS ATTENTION', bands.needs);
+  document.getElementById('coach-performance-bands').innerHTML = html;
+}
+
+function renderBand(band, label, coaches) {
+  if (coaches.length === 0) return '';
+  const show4 = !expandedBands[band];
+  const visible = show4 ? coaches.slice(0, 4) : coaches;
+  const remaining = coaches.length - 4;
+
+  let cards = '';
+  for (let i = 0; i < visible.length; i += 4) {
+    const row = visible.slice(i, i + 4);
+    cards += `<div class="coach-row">${row.map(c => coachCardHTML(c)).join('')}</div>`;
+  }
+
+  let btn = '';
+  if (coaches.length > 4) {
+    if (show4) {
+      btn = `<button class="show-all-btn" onclick="toggleBand('${band}')">Show all ${coaches.length} coaches <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></button>`;
+    } else {
+      btn = `<button class="show-all-btn" onclick="toggleBand('${band}')">Show less <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="18 15 12 9 6 15"/></svg></button>`;
+    }
+  }
+
+  return `
+    <div class="perf-band">
+      <div class="band-header">
+        <span class="band-label ${band}">${label}</span>
+        <span class="band-count">${coaches.length} coaches</span>
+      </div>
+      ${cards}
+      ${btn}
+    </div>`;
+}
+
+function coachCardHTML(c) {
+  const score = c.scores.overall;
+  const circ = 2 * Math.PI * 20;
+  const offset = (circ - (score / 100) * circ).toFixed(1);
+  const col = ringColor(score);
+  return `
+    <div class="coach-card" onclick="openCoach(${c.id})">
+      <div class="cc-status-bar ${c.band}"></div>
+      <div class="cc-top">
+        <div class="cc-info">
+          <div class="cc-name">${c.name}</div>
+          <div class="cc-level">${c.level}</div>
+        </div>
+        <div class="ring-sm" style="width:46px;height:46px">
+          <svg viewBox="0 0 46 46" fill="none" style="width:46px;height:46px;transform:rotate(-90deg)">
+            <circle cx="23" cy="23" r="19" stroke="#e8eaed" stroke-width="4"/>
+            <circle cx="23" cy="23" r="19" stroke="${col}" stroke-width="4"
+              stroke-dasharray="${(2*Math.PI*19).toFixed(1)}" stroke-dashoffset="${(2*Math.PI*19 - (score/100)*2*Math.PI*19).toFixed(1)}"
+              stroke-linecap="round"/>
+          </svg>
+          <div class="ring-val" style="font-size:13px;font-weight:700">${score}</div>
+        </div>
+      </div>
+      <div class="cc-stats">
+        <div class="cc-stat">
+          <div class="stat-label">Clients</div>
+          <div class="stat-val">${c.activeClients}</div>
+        </div>
+        <div class="cc-stat">
+          <div class="stat-label">Sessions</div>
+          <div class="stat-val">${c.sessionsCompleted}</div>
+        </div>
+      </div>
+    </div>`;
+}
+
+function toggleBand(band) {
+  expandedBands[band] = !expandedBands[band];
+  const q = document.getElementById('coach-search').value.toLowerCase();
+  const filtered = q ? allCoachesScored.filter(c => c.name.toLowerCase().includes(q)) : allCoachesScored;
+  renderBandsUI(filtered);
+}
+
+/* ──────────────────────────────────────────────────────────────
+   RAMP PYRAMID
+────────────────────────────────────────────────────────────── */
+const RAMP_STAGES = ['Month 3', 'Month 2', 'Week 4', 'Week 3', 'Week 2', 'Week 1'];
+const PYRAMID_COLORS = ['#1e3a5f','#2d5282','#3b6cb7','#5b88cc','#8badd8','#b8cce4'];
+const PYRAMID_WIDTHS = [180, 155, 130, 105, 80, 60];
+let selectedRampStage = null;
+
+function renderRampPyramid() {
+  const ps = window.PORTFOLIO_STATS;
+  const ramping = window.REAL_COACHES.filter(c => c.isRamping);
+  document.getElementById('ramp-total-count').textContent = ramping.length + ' ramping coaches';
+
+  let html = '';
+  RAMP_STAGES.forEach((stage, i) => {
+    const count = (ps.rampDistribution[stage] || { count: 0 }).count;
+    const w = PYRAMID_WIDTHS[i];
+    const isSelected = selectedRampStage === stage;
+    html += `
+      <div class="pyramid-row${isSelected ? ' selected' : ''}" onclick="selectRampStage('${stage}')">
+        <div style="flex:1;display:flex;justify-content:center">
+          <div class="pyramid-bar" style="width:${w}px;background:${PYRAMID_COLORS[i]}">${stage}</div>
+        </div>
+        <div class="pyramid-row-count">${count}</div>
+      </div>`;
+  });
+  document.getElementById('ramp-pyramid').innerHTML = html;
+
+  if (selectedRampStage) renderRampStageDetail(selectedRampStage);
+}
+
+function selectRampStage(stage) {
+  selectedRampStage = selectedRampStage === stage ? null : stage;
+  renderRampPyramid();
+  const detail = document.getElementById('ramp-stage-detail');
+  if (selectedRampStage) {
+    detail.classList.remove('hidden');
+    renderRampStageDetail(selectedRampStage);
+  } else {
+    detail.classList.add('hidden');
+  }
+}
+
+function renderRampStageDetail(stage) {
+  const coaches = window.REAL_COACHES.filter(c => c.rampStage === stage);
+  const ps = window.PORTFOLIO_STATS;
+  const stageCount = (ps.rampDistribution[stage] || { count: 0 }).count;
+
+  document.getElementById('ramp-stage-title').textContent = stage.toUpperCase() + ' · ' + stageCount + ' COACHES';
+
+  const scoredCoaches = coaches.map(c => { const s = overallScore(c); return { ...c, scores: s }; });
+  const preview = scoredCoaches.slice(0, 2);
+
+  let html = '';
+  preview.forEach(c => {
+    const initials = c.name.split(' ').map(n => n[0]).join('');
+    const col = c.scores.overall >= 75 ? 'var(--green)' : c.scores.overall >= 50 ? 'var(--amber)' : 'var(--red)';
+    html += `
+      <div class="ramp-coach-item" onclick="openCoach(${c.id})">
+        <div class="ramp-coach-avatar">${initials}</div>
+        <div class="ramp-coach-info">
+          <div class="ramp-coach-name">${c.name}</div>
+          <div class="ramp-coach-level">${c.level}</div>
+        </div>
+        <div class="ramp-coach-score" style="color:${col}">${c.scores.overall}</div>
+      </div>`;
+  });
+  document.getElementById('ramp-stage-coaches').innerHTML = html;
+
+  const viewAll = document.getElementById('ramp-view-all');
+  if (coaches.length > 2) {
+    viewAll.innerHTML = `View all ${coaches.length} coaches in ${stage} →`;
+    viewAll.style.display = 'flex';
+  } else {
+    viewAll.style.display = 'none';
+  }
+}
+
+/* ──────────────────────────────────────────────────────────────
+   TOGGLE COACH PANEL
+────────────────────────────────────────────────────────────── */
+function toggleCoachPanel() {
+  const panel = document.getElementById('coach-level-panel');
+  const kpiCard = document.getElementById('kpi-coaches');
+  const isOpen = panel.classList.contains('open');
+  panel.classList.toggle('open', !isOpen);
+  kpiCard.classList.toggle('selected', !isOpen);
+}
+
+/* ──────────────────────────────────────────────────────────────
+   OPEN COACH DETAIL
+────────────────────────────────────────────────────────────── */
+let currentCoachId = null;
+let currentPPIndex = null;
+
+function openCoach(id) {
+  currentCoachId = id;
+  const pp = window.PAY_PERIODS;
+  currentPPIndex = pp.findIndex(p => p.isCurrent);
+  if (currentPPIndex === -1) currentPPIndex = pp.length - 1;
+
+  document.getElementById('view-overview').classList.remove('active');
+  document.getElementById('view-detail').classList.add('active');
+  window.scrollTo(0, 0);
+
+  renderPayPeriodToggle();
+  renderCoachDetail();
+}
+
+function showOverview() {
+  document.getElementById('view-detail').classList.remove('active');
+  document.getElementById('view-overview').classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function renderPayPeriodToggle() {
+  const pp = window.PAY_PERIODS;
+  let html = '';
+  pp.forEach((p, i) => {
+    html += `<button class="pp-btn${i === currentPPIndex ? ' active' : ''}" onclick="selectPP(${i})">${p.label}</button>`;
+  });
+  document.getElementById('pp-toggle').innerHTML = html;
+}
+
+function selectPP(i) {
+  currentPPIndex = i;
+  renderPayPeriodToggle();
+  renderCoachDetail();
+}
+
+/* ──────────────────────────────────────────────────────────────
+   RENDER COACH DETAIL
+────────────────────────────────────────────────────────────── */
+function renderCoachDetail() {
+  const c = window.REAL_COACHES.find(x => x.id === currentCoachId);
+  if (!c) return;
+  const pp = window.PAY_PERIODS[currentPPIndex];
+  const scores = overallScore(c);
+  const status = scoreStatus(scores.overall);
+  const diag = diagnose(c, scores);
+  const comp = calcPayout(c);
+  const nextTier = getNextTier(c.sessionsCompleted);
+
+  // Header meta
+  document.getElementById('det-name').textContent = c.name;
+  document.getElementById('det-club').textContent = c.club;
+  document.getElementById('det-ramp').textContent = c.isRamping ? c.rampStage : 'Fully Ramped';
+  document.getElementById('det-pp').textContent = pp.label;
+
+  // Dev score ring
+  const devCirc = 2 * Math.PI * 36;
+  setRing(document.getElementById('dev-ring'), scores.overall, devCirc);
+  document.getElementById('dev-score-num').textContent = scores.overall;
+  document.getElementById('dev-status').textContent = status.label;
+  document.getElementById('dev-status').style.color = status.color;
+  document.getElementById('dev-diagnosis').textContent = diag.diagSentence;
+
+  // Pillar rings
+  const pillarCirc = 2 * Math.PI * 20;
+  renderPillarCard('prof', scores.professionalism, pillarCirc, [
+    ['Equifits Completed', c.equifitsCompleted],
+    ['Leads Generated', c.leadsGenerated],
+    ['Equifits Booked', c.equifitsBooked],
+    ['Follow-Ups', c.followUps]
+  ]);
+  renderPillarCard('prog', scores.programming, pillarCirc, [
+    ['CPTs Completed', c.cptsCompleted],
+    ['SPU (Sessions / Unit)', c.spu.toFixed(1)],
+    ['Session Confirm', c.sessionConfirmRate + '%'],
+    ['Client Experience', c.clientExperience]
+  ]);
+  renderPillarCard('perf', scores.performance, pillarCirc, [
+    ['Active Clients', c.activeClients],
+    ['Conversion Rate', c.opportunitiesCreated > 0 ? Math.round(c.conversions / c.opportunitiesCreated * 100) + '%' : '0%'],
+    ['Sessions / Pay Period', c.sessionsCompleted],
+    ['Retention (Recurring)', c.activeClients > 0 ? Math.round(c.recurringClients / c.activeClients * 100) + '%' : '0%']
+  ]);
+
+  // Progress Pyramid
+  renderDetailPyramid(c);
+
+  // Compensation
+  document.getElementById('comp-tier').textContent = c.level;
+  document.getElementById('comp-rate').textContent = '$' + comp.tier.rate.toFixed(2);
+  document.getElementById('comp-payout').textContent = '$' + comp.total.toLocaleString();
+  document.getElementById('comp-breakdown').innerHTML = `
+    <div>
+      <div class="comp-line-label">Sessions</div>
+      <div class="comp-line-calc">${c.sessionsCompleted} × $${comp.tier.rate.toFixed(2)} = $${Math.round(comp.sessionEarnings)}</div>
+    </div>
+    <div>
+      <div class="comp-line-label">Equifits</div>
+      <div class="comp-line-calc">${c.equifitsCompleted} × $${window.EQUIFIT_RATE} = $${comp.equifitEarnings}</div>
+    </div>
+    <div>
+      <div class="comp-line-label">CPTs</div>
+      <div class="comp-line-calc">${c.cptsCompleted} × $${window.CPT_RATE} = $${comp.cptEarnings}</div>
+    </div>`;
+
+  // Pay Period Progress
+  const currentMax = comp.tier.max === Infinity ? comp.tier.min + 20 : comp.tier.max + 1;
+  if (nextTier) {
+    const needed = nextTier.min - c.sessionsCompleted;
+    document.getElementById('ppp-unlock-msg').innerHTML = `<span>${needed} more sessions</span> unlock $${nextTier.rate.toFixed(2)}/session`;
+  } else {
+    document.getElementById('ppp-unlock-msg').innerHTML = 'At <span>top tier</span> — $' + comp.tier.rate.toFixed(2) + '/session';
+  }
+  const barPct = Math.min(100, Math.round(c.sessionsCompleted / (nextTier ? nextTier.min : comp.tier.min + 10) * 100));
+  document.getElementById('ppp-bar').style.width = barPct + '%';
+  document.getElementById('ppp-fraction').textContent = c.sessionsCompleted + ' / ' + (nextTier ? nextTier.min : comp.tier.min) + ' sessions to next tier';
+
+  // Rate grid
+  const tiers = window.SESSION_RATE_TIERS;
+  let rateHtml = '';
+  tiers.forEach(t => {
+    const isCurrent = c.sessionsCompleted >= t.min && c.sessionsCompleted <= t.max;
+    rateHtml += `
+      <div class="rate-cell${isCurrent ? ' current-tier' : ''}">
+        <div class="rc-sessions">${t.label}</div>
+        <div class="rc-rate">$${t.rate.toFixed(2)}</div>
+      </div>`;
+  });
+  document.getElementById('rate-grid').innerHTML = rateHtml;
+
+  // KPI Strip
+  const recurRate = c.activeClients > 0 ? Math.round(c.recurringClients / c.activeClients * 100) : 0;
+  document.getElementById('strip-active').textContent = c.activeClients;
+  document.getElementById('strip-recurring').textContent = c.recurringClients + ' / ' + c.activeClients;
+  document.getElementById('strip-recurring-pct').textContent = recurRate + '%';
+  document.getElementById('strip-avg-prog').textContent = c.avgProgramFrequency + 'x';
+
+  // Progress Elevation Steps
+  document.getElementById('pes-wins').textContent = diag.wins.join(' ');
+  document.getElementById('pes-opps').textContent = diag.opps.join(' ');
+  document.getElementById('pes-next').innerHTML = '<ul>' + diag.next.map(s => `<li>${s}</li>`).join('') + '</ul>';
+}
+
+function renderPillarCard(prefix, score, circ, kpis) {
+  const ring = document.getElementById(prefix + '-ring');
+  const scoreEl = document.getElementById(prefix + '-score');
+  const badge = document.getElementById(prefix + '-badge');
+  const kpisEl = document.getElementById(prefix + '-kpis');
+
+  setRing(ring, score, circ);
+  scoreEl.textContent = score;
+
+  const st = scoreStatus(score);
+  badge.textContent = st.label === 'Top Performer' ? 'Top Performer' : st.label;
+  badge.className = 'badge ' + (score >= 75 ? 'top' : score >= 50 ? 'building' : 'needs');
+
+  let html = '';
+  kpis.forEach(([name, val]) => {
+    html += `<div class="pc-kpi-row">
+      <span class="pc-kpi-name">${name}</span>
+      <span class="pc-kpi-val">${val}</span>
+    </div>`;
+  });
+  kpisEl.innerHTML = html;
+}
+
+function renderDetailPyramid(c) {
+  const convRate = c.opportunitiesCreated > 0 ? Math.round(c.conversions / c.opportunitiesCreated * 100) : 0;
+  const ramboReady = c.activeClients >= 15 && convRate >= 40 && c.recurringClients >= 10;
+
+  const layers = [
+    { label: 'RAMBO\nREADINESS', w: 110, h: 52, bg: ramboReady ? '#1e3a5f' : '#4b5563', icon: '⚑' },
+    { label: 'CLIENTS', w: 140, h: 44, bg: '#2d5282' },
+    { label: 'ACTIVITY', w: 170, h: 44, bg: '#5b88cc' }
+  ];
+
+  let pyramidHtml = layers.map(l => `
+    <div class="pdc-layer" style="width:${l.w}px;height:${l.h}px;background:${l.bg};font-size:11px;padding:4px 8px">
+      ${l.label.replace('\n', '<br>')}
+    </div>`).join('');
+
+  document.getElementById('pdc-pyramid').innerHTML = pyramidHtml;
+
+  const metrics = [
+    { label: 'Opportunities Created', val: c.opportunitiesCreated, sub: '' },
+    { label: 'Conversions', val: c.conversions, sub: convRate + '% rate' },
+    { label: 'Active Clients', val: c.activeClients, sub: '' },
+    { label: 'Recurring Clients', val: c.recurringClients, sub: '' },
+    { label: 'Sessions Completed', val: c.sessionsCompleted, sub: '' },
+    { label: 'Leads Generated', val: c.leadsGenerated, sub: '' }
+  ];
+
+  document.getElementById('pdc-metrics').innerHTML = metrics.map(m => `
+    <div class="pdc-metric">
+      <div class="pdc-metric-label">${m.label}</div>
+      <div class="pdc-metric-val">${m.val}</div>
+      ${m.sub ? `<div class="pdc-metric-sub">${m.sub}</div>` : ''}
+    </div>`).join('');
+}
+
+/* ──────────────────────────────────────────────────────────────
+   INIT
+────────────────────────────────────────────────────────────── */
+renderOverview();
+</script>
+</body>
+</html>
