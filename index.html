@@ -283,19 +283,19 @@ a { text-decoration: none; color: inherit; }
   background: var(--white);
   border: var(--border);
   border-radius: var(--radius);
-  padding: 16px 14px 14px;
-  cursor: pointer; position: relative; overflow: hidden;
+  padding: 14px 12px 12px;
+  cursor: pointer; position: relative;
   transition: box-shadow 0.12s, border-color 0.12s;
 }
 .cc2:hover { box-shadow: var(--shadow-lg); border-color: var(--mid-gray); }
-.cc2-accent { position: absolute; left: 0; top: 0; bottom: 0; width: 3px; }
+.cc2-accent { position: absolute; left: 0; top: 0; bottom: 0; width: 3px; border-radius: var(--radius) 0 0 var(--radius); }
 .cc2-top {
   display: flex; align-items: flex-start; justify-content: space-between;
-  margin-bottom: 14px; padding-left: 8px;
+  gap: 6px; margin-bottom: 12px; padding-left: 8px;
 }
-.cc2-name { font-size: 13px; font-weight: 600; color: var(--black); line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 130px; }
-.cc2-meta { font-size: 10px; color: var(--mid-gray); font-family: 'DM Mono', monospace; margin-top: 3px; letter-spacing: 0.03em; }
-.cc2-score { font-size: 28px; font-weight: 700; letter-spacing: -0.5px; line-height: 1; flex-shrink: 0; }
+.cc2-name { font-size: 12px; font-weight: 600; color: var(--black); line-height: 1.2; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cc2-meta { font-size: 9px; color: var(--mid-gray); font-family: 'DM Mono', monospace; margin-top: 2px; letter-spacing: 0.03em; }
+.cc2-score { font-size: 22px; font-weight: 700; letter-spacing: -0.5px; line-height: 1; flex-shrink: 0; }
 .cc2-rings { display: flex; justify-content: space-around; align-items: flex-start; padding: 0 2px; }
 .cc2-ring-wrap { display: flex; flex-direction: column; align-items: center; gap: 5px; }
 .cc2-ring-cont { position: relative; width: 50px; height: 50px; flex-shrink: 0; }
@@ -714,6 +714,90 @@ a { text-decoration: none; color: inherit; }
 .hidden { display: none !important; }
 .mt8 { margin-top: 8px; }
 .mt14 { margin-top: 14px; }
+
+/* ═══════════════════════════════════════════════════════════
+   RESPONSIVE — MOBILE (≤ 767px)
+   Stacks all grids, reduces padding, keeps content legible
+═══════════════════════════════════════════════════════════ */
+@media (max-width: 767px) {
+
+  /* Wrapper padding */
+  .wrap { padding: 0 14px; }
+
+  /* Topbar */
+  .topbar { padding: 12px 14px; }
+  .topbar-inner { flex-wrap: wrap; gap: 6px; }
+  .topbar h1 { font-size: 12px; letter-spacing: 0.08em; }
+  .topbar .meta { font-size: 10px; gap: 6px; }
+  .topbar-inner > div:first-child { gap: 10px; }
+  .topbar-back { font-size: 9px; padding: 4px 8px; }
+  .data-source { display: none; }
+
+  /* KPI grid — 2 cols */
+  .kpi-grid { grid-template-columns: 1fr 1fr; gap: 10px; margin: 14px 0; }
+  .kpi-num { font-size: 26px; }
+  .kpi-card { padding: 14px 14px; }
+
+  /* Active coaches expansion */
+  .exp-body { grid-template-columns: 1fr; }
+  .level-col:not(:last-child) { border-right: none; border-bottom: 1px solid var(--light-gray); }
+
+  /* Main two-column — stack */
+  .main-cols { grid-template-columns: 1fr; gap: 14px; padding-bottom: 32px; }
+
+  /* Coach card grid — 2 cols on mobile */
+  .coach-card-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .cc2 { padding: 12px 10px 10px; }
+  .cc2-score { font-size: 20px; }
+  .cc2-name { font-size: 11px; }
+  .cc2-ring-cont { width: 42px; height: 42px; }
+  .cc2-ring-cont svg { width: 42px; height: 42px; }
+  .cc2-ring-val { font-size: 9px; }
+  .cc2-ring-lbl { font-size: 7px; }
+
+  /* Back button — prevent stretching */
+  .back-btn { display: inline-flex; width: auto; font-size: 11px; }
+
+  /* Pay period toggle */
+  .pp-toggle { gap: 4px; margin: 10px 0 16px; }
+  .pp-btn { padding: 5px 9px; font-size: 10px; }
+
+  /* Score + Pillars grid — single column */
+  .score-grid { grid-template-columns: 1fr; gap: 10px; margin-bottom: 12px; }
+  .dev-body { flex-direction: column; align-items: flex-start; gap: 16px; }
+
+  /* Middle row — stack */
+  .middle-grid { grid-template-columns: 1fr; gap: 10px; margin-bottom: 12px; }
+
+  /* Progress pyramid body */
+  .pdc-body { flex-direction: column; gap: 14px; }
+  .pdc-pyramid { align-self: center; }
+
+  /* Compensation */
+  .comp-top { grid-template-columns: 1fr 1fr; }
+  .comp-lines { grid-template-columns: 1fr 1fr; }
+  .rate-grid { grid-template-columns: repeat(3, 1fr); }
+
+  /* KPI strip — 2 cols */
+  .kpi-strip { grid-template-columns: 1fr 1fr; gap: 10px; }
+
+  /* Progress Elevation Steps — single col */
+  .pes-grid { grid-template-columns: 1fr; gap: 10px; }
+
+  /* Ramp pyramid — fit narrower panel */
+  .ramp-panel { padding: 16px 14px; }
+
+  /* At-risk expansion rows */
+  .risk-gap { display: none; }
+}
+
+@media (max-width: 420px) {
+  /* Very small phones — single col cards */
+  .coach-card-grid { grid-template-columns: 1fr; }
+  .kpi-grid { grid-template-columns: 1fr; }
+  .kpi-strip { grid-template-columns: 1fr; }
+  .comp-top { grid-template-columns: 1fr; }
+}
 </style>
 </head>
 <body>
